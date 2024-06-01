@@ -6,8 +6,10 @@ import { TbPackages } from "react-icons/tb";
 import { MdKeyboardDoubleArrowUp } from "react-icons/md";
 import { LuUsers2 } from "react-icons/lu";
 import { MdOutlineAttachMoney } from "react-icons/md";
-// import { useQuery } from "@apollo/client";
 import moment from "moment-timezone";
+import { GET_PACKAGES_QUERY } from "../graph/queries";
+import { useQuery } from "@apollo/client";
+import Stats from "../components/stats";
 
 const DEFAULT_TIMEZONE = 'Africa/Tunis'; // Set default timezone to Tunisia
 
@@ -24,8 +26,6 @@ const getStats = (packages:any) => {
   packages.forEach((pkg:any) => {
     // Convert the timestamp to a date object
     const packageDate = moment.tz(new Date(parseInt(pkg.createdAt)), DEFAULT_TIMEZONE);
-    console.log("Package Date:", packageDate.format("YYYY-MM-DD HH:mm:ss"));
-
     if (pkg.status === "DELIVERED") {
       if (packageDate.isSame(moment(), "day")) {
         stats.today[0]++;
@@ -45,8 +45,6 @@ const getStats = (packages:any) => {
       }
     }
   });
-
-  console.log("Stats:", stats);
   return stats;
 };
 
@@ -60,40 +58,23 @@ const Dashboard = () => {
     thisYear: [0, 0],
   });
 
-  const fetchPackages = async () => {
-    const response = await fetch(process.env.NEXT_PUBLIC_API_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        query: `
-          query GetAllPackages {
-            getAllPackages {
-              id
-              checkoutId
-              status
-              createdAt
-              Checkout {
-                id
-                total
-              }
-            }
-          }
-        `,
-      }),
-    });
-    const result = await response.json();
-    if (result.data) {
-      setPackageData(result.data.getAllPackages);
-    } else {
-      console.error(result.errors);
-    }
-  };
+  const { loading } = useQuery(GET_PACKAGES_QUERY, {
+    onCompleted: (data:any) => {
+      setPackageData(data.getAllPackages);
+    },
+    onError: (error:any) => {
+      console.error(error);
+    },
+  });
+
+
 
   useEffect(() => {
-    fetchPackages();
-  }, []);
+    if (packageData.length) {
+      const calculatedStats = getStats(packageData);
+      setStats(calculatedStats);
+    }
+  }, [packageData]);
 
 
 
@@ -108,36 +89,7 @@ const Dashboard = () => {
 
   return (
     <div className="w-full p-8">
-      <div className="main-cards grid grid-cols-4 gap-5 my-4">
-        <div className="card flex flex-col justify-around p-4 px-6 rounded bg-white border shadow-md">
-          <div className="card-inner text-lg text-blue-900 flex items-center justify-between">
-            <h3>PRODUITS</h3>
-            <LuPackage2 className="card_icon" />
-          </div>
-          <h1 className="text-blue-900">300</h1>
-        </div>
-        <div className="card flex flex-col justify-around p-4 px-6 rounded bg-white border shadow-md">
-          <div className="card-inner text-lg text-blue-900 flex items-center justify-between">
-            <h3>COMMANDES</h3>
-            <TbPackages className="card_icon" />
-          </div>
-          <h1 className="text-blue-900">12</h1>
-        </div>
-        <div className="card flex flex-col justify-around p-4 px-6 rounded bg-white border shadow-md">
-          <div className="card-inner text-lg text-blue-900 flex items-center justify-between">
-            <h3>CLIENTS</h3>
-            <LuUsers2 className="card_icon" />
-          </div>
-          <h1 className="text-blue-900">33</h1>
-        </div>
-        <div className="card flex flex-col justify-around p-4 px-6 rounded bg-white border shadow-md">
-          <div className="card-inner text-lg text-blue-900 flex items-center justify-between">
-            <h3>UP SELLS</h3>
-            <MdKeyboardDoubleArrowUp className="card_icon" />
-          </div>
-          <h1 className="text-blue-900">42</h1>
-        </div>
-      </div>
+      <Stats/>
       <div className="w-full mt-10 border shadow-md rounded-sm">
         <h1 className="font-semibold py-5 px-4 border-b-2 w-full">
           Aperçu de votre tableau de bord
