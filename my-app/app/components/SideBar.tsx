@@ -36,7 +36,7 @@ const SideBar = () => {
             </li>
             <li className="flex w-full py-4 px-4 justify-between text-white rounded-l-full hover:text-blue-900 hover:bg-gray-100 cursor-pointer items-center transition">
               <Link
-                href="/"
+                href="/dashboard"
                 className="flex items-center focus:outline-none focus:ring-2 focus:ring-white"
               >
                 <CiHome size={24} />
@@ -47,7 +47,7 @@ const SideBar = () => {
             </li>
             <li className="flex w-full py-4 px-4 justify-between text-white rounded-l-full hover:text-blue-900 hover:bg-gray-100 cursor-pointer items-center transition">
               <Link
-                href="/"
+                href="/packages"
                 className="flex items-center focus:outline-none focus:ring-2 focus:ring-white"
               >
                 <LuPackage2 size={24} />
@@ -56,7 +56,7 @@ const SideBar = () => {
             </li>
             <li className="flex w-full py-4 px-4 justify-between text-white rounded-l-full hover:text-blue-900 hover:bg-gray-100 cursor-pointer items-center transition">
               <Link
-                href="/"
+                href="/products"
                 className="flex items-center focus:outline-none focus:ring-2 focus:ring-white"
               >
                 <TbPackages size={24} />
@@ -65,7 +65,7 @@ const SideBar = () => {
             </li>
             <li className="flex w-full py-4 px-4 justify-between text-white rounded-l-full hover:text-blue-900 hover:bg-gray-100 cursor-pointer items-center transition">
               <Link
-                href="/"
+                href="/best-sales"
                 className="flex items-center focus:outline-none focus:ring-2 focus:ring-white"
               >
                 <MdKeyboardDoubleArrowUp size={24} />
@@ -74,7 +74,7 @@ const SideBar = () => {
             </li>
             <li className="flex w-full py-4 px-4 justify-between text-white rounded-l-full hover:text-blue-900 hover:bg-gray-100 cursor-pointer items-center transition">
               <Link
-                href="/"
+                href="/clients"
                 className="flex items-center focus:outline-none focus:ring-2 focus:ring-white"
               >
                 <LuUsers2 size={24} />
@@ -83,7 +83,7 @@ const SideBar = () => {
             </li>
             <li className="flex w-full py-4 px-4 justify-between text-white rounded-l-full hover:text-blue-900 hover:bg-gray-100 cursor-pointer items-center transition">
               <Link
-                href="/"
+                href="/statistics"
                 className="flex items-center focus:outline-none focus:ring-2 focus:ring-white"
               >
                 <FaRegChartBar size={24} />
