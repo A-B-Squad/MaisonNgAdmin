@@ -9,8 +9,18 @@ import { SEARCH_PRODUCTS_QUERY } from "../graph/queries";
 import { useLazyQuery, useQuery } from "@apollo/client";
 
 import moment from "moment";
+import { useSearchParams } from "next/navigation";
 
 const Products = () => {
+
+    const searchParams = useSearchParams();
+
+  const query = searchParams?.get("q")
+  const order = searchParams?.get("order")
+
+console.log('====================================');
+console.log("query: ",query," order: ",order);
+console.log('====================================');
   const [products, setProducts] = useState<any>([]);
   const pageSize = 5;
   const [page, setPage] = useState(1);
@@ -30,7 +40,7 @@ const Products = () => {
       const { data } = await searchProducts({
         variables: {
           input: {
-            query: "",
+            query: query || undefined,
             page,
             pageSize,
           },
@@ -40,6 +50,11 @@ const Products = () => {
       const fetchedProducts = [
         ...(data?.searchProducts?.results?.products || []),
       ];
+      if (order === "ASC") {
+        fetchedProducts.sort((a, b) => a.price - b.price);
+      } else if (order === "DESC") {
+        fetchedProducts.sort((a, b) => b.price - a.price);
+      }
 
       setProducts(fetchedProducts);
       setTotalCount(data?.searchProducts?.totalCount || 0);
@@ -48,7 +63,7 @@ const Products = () => {
       setLoading(false);
       console.error("Error fetching products:", error);
     }
-  }, [page, pageSize]);
+  }, [page, pageSize,query,order]);
 
   useEffect(() => {
     fetchProducts();
@@ -88,7 +103,7 @@ const Products = () => {
         <button
           key={i}
           onClick={() => setPage(i)}
-          className={`flex items-center justify-center px-3 h-8 leading-tight cursor-pointer text-white border border-mainColorAdminDash hover:bg-mainColorAdminDash hover:text-white ${
+          className={`flex items-center justify-center px-3 h-8 leading-tight cursor-pointer text-mainColorAdminDash border border-mainColorAdminDash hover:bg-mainColorAdminDash hover:text-white ${
             page === i
               ? "bg-mainColorAdminDash text-white"
               : "bg-white text-mainColorAdminDash"
@@ -164,7 +179,7 @@ const Products = () => {
                             </div>
                           </td>
                           <td className="px-4 py-3 text-ms font-semibold border">
-                            22
+                            {product.price.toFixed(3)}
                           </td>
                           <td className="px-4 py-3 text-xs border">
                             <span
