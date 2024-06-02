@@ -1,36 +1,117 @@
 "use client";
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import Stats from "../components/stats";
 import SearchBar from "../components/searchBar";
 import { FiEdit2 } from "react-icons/fi";
 import { BiShow } from "react-icons/bi";
 import { MdDeleteOutline } from "react-icons/md";
 import { SEARCH_PRODUCTS_QUERY } from "../graph/queries";
-import { useQuery } from "@apollo/client";
+import { useLazyQuery, useQuery } from "@apollo/client";
+
 import moment from "moment";
 
 const Products = () => {
-  const [products, setProducts] = useState([]);
+  const [products, setProducts] = useState<any>([]);
+  const pageSize = 5;
+  const [page, setPage] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const numberOfPages = Math.ceil(totalCount / pageSize);
 
-  const formatDate = (timestamp) => {
+  const formatDate = (timestamp: any) => {
     return moment(parseInt(timestamp, 10)).format("DD/MM/YYYY");
   };
 
-  const { loading } = useQuery(SEARCH_PRODUCTS_QUERY, {
-    variables: {
-      input: {
-        query: "",
-        pageSize: 5,
-        page: 1,
-      },
-    },
-    onCompleted(data) {
-      console.log("====================================");
-      console.log(data);
-      console.log("====================================");
-      setProducts(data.searchProducts.results.products);
-    },
-  });
+  const [searchProducts] = useLazyQuery(SEARCH_PRODUCTS_QUERY);
+
+  const fetchProducts = useCallback(async () => {
+    setLoading(true);
+    try {
+      const { data } = await searchProducts({
+        variables: {
+          input: {
+            query: "",
+            page,
+            pageSize,
+          },
+        },
+      });
+
+      const fetchedProducts = [
+        ...(data?.searchProducts?.results?.products || []),
+      ];
+
+      setProducts(fetchedProducts);
+      setTotalCount(data?.searchProducts?.totalCount || 0);
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+      console.error("Error fetching products:", error);
+    }
+  }, [page, pageSize]);
+
+  useEffect(() => {
+    fetchProducts();
+  }, [fetchProducts]);
+
+  const handleNextPage = () => {
+    if (page < numberOfPages) {
+      setPage(page + 1);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
+
+  const handlePrevPage = () => {
+    if (page > 1) {
+      setPage(page - 1);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
+
+  const renderPageNumbers = () => {
+    const maxPagesToShow = 6;
+    const pages: React.ReactNode[] = [];
+    const startPage = Math.max(
+      1,
+      Math.min(
+        page - Math.floor(maxPagesToShow / 2),
+        numberOfPages - maxPagesToShow + 1
+      )
+    );
+
+    for (
+      let i = startPage;
+      i < startPage + maxPagesToShow && i <= numberOfPages;
+      i++
+    ) {
+      pages.push(
+        <button
+          key={i}
+          onClick={() => setPage(i)}
+          className={`flex items-center justify-center px-3 h-8 leading-tight cursor-pointer text-white border border-mainColorAdminDash hover:bg-mainColorAdminDash hover:text-white ${
+            page === i
+              ? "bg-mainColorAdminDash text-white"
+              : "bg-white text-mainColorAdminDash"
+          }`}
+        >
+          {i}
+        </button>
+      );
+    }
+
+    if (numberOfPages > maxPagesToShow) {
+      pages.push(
+        <span
+          key="more-pages"
+          className="flex items-center justify-center px-3 h-8 text-mainColorAdminDash border border-mainColorAdminDash"
+        >
+          ...
+        </span>
+      );
+    }
+
+    return pages;
+  };
 
   return (
     <div className="w-full p-8">
@@ -60,7 +141,7 @@ const Products = () => {
                     </thead>
                     <tbody className="bg-white">
                       {products?.map((product: any) => (
-                        <tr className="text-gray-700">
+                        <tr className="text-gray-700" key={product.id}>
                           <td className="px-4 py-3 border">
                             <div className="flex items-center text-sm">
                               <div className="relative w-8 h-8 mr-3 rounded-full md:block">
@@ -96,7 +177,9 @@ const Products = () => {
                               {!product.visibility ? "Visible" : "Non visible"}
                             </span>
                           </td>
-                          <td className="px-4 py-3 text-sm border">{formatDate(product.createdAt)}</td>
+                          <td className="px-4 py-3 text-sm border">
+                            {formatDate(product.createdAt)}
+                          </td>
                           <td className="px-4 py-3 text-sm border">
                             {product.solde}
                           </td>
@@ -119,8 +202,39 @@ const Products = () => {
                   </table>
                 </div>
               </div>
-              <div className="">
-                <button className="text-white p-3 rounded-md bg-mainColorAdminDash">
+              <div className="flex justify-between">
+                {products.length > 0 && (
+                  <div className="Page pagination justify-self-start h-32">
+                    <ul className="inline-flex -space-x-px text-sm">
+                      <li>
+                        <button
+                          onClick={handlePrevPage}
+                          disabled={page === 1}
+                          className={`flex items-center justify-center px-3 h-8 leading-tight text-mainColorAdminDash bg-white border border-mainColorAdminDash rounded-s-lg  ${
+                            page !== 1 &&
+                            "hover:bg-mainColorAdminDash hover:text-white"
+                          } `}
+                        >
+                          Previous
+                        </button>
+                      </li>
+                      {renderPageNumbers()}
+                      <li>
+                        <button
+                          onClick={handleNextPage}
+                          disabled={page === Math.ceil(totalCount / pageSize)}
+                          className={`flex items-center justify-center px-3 h-8 leading-tight text-mainColorAdminDash bg-white border border-mainColorAdminDash rounded-e-lg  ${
+                            page !== Math.ceil(totalCount / pageSize) &&
+                            "hover:bg-mainColorAdminDash hover:text-white"
+                          } `}
+                        >
+                          Next
+                        </button>
+                      </li>
+                    </ul>
+                  </div>
+                )}
+                <button className="text-white h-12 p-3 rounded-md bg-mainColorAdminDash">
                   Ajouter un produit +
                 </button>
               </div>
