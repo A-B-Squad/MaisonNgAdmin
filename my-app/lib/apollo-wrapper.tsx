@@ -11,7 +11,7 @@ import { redirect, usePathname } from "next/navigation";
 
 function makeClient() {
   if (usePathname()?.split("").length === 1) {
-    redirect("/Home");
+    redirect("/dashboard");
   }
   const httpLink = new HttpLink({
     uri: `${process.env.NEXT_PUBLIC_API_URL}`,

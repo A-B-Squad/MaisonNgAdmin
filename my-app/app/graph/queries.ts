@@ -66,3 +66,11 @@ export const SEARCH_PRODUCTS_QUERY = gql`
     }
   }
 `;
+export const ADVERTISSMENT_QUERY = gql`
+  query AdvertismentByPosition($position: String!) {
+    advertismentByPosition(position: $position) {
+      images
+      link
+    }
+  }
+`;
