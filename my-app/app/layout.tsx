@@ -3,7 +3,7 @@ import SideBar from "./components/SideBar";
 import Header from "./components/Header";
 import "./globals.css";
 import { Open_Sans } from "next/font/google";
-
+import { Toaster } from "@/components/ui/toaster";
 import { loadErrorMessages, loadDevMessages } from "@apollo/client/dev";
 import { ApolloWrapper } from "@/lib/apollo-wrapper";
 
@@ -27,13 +27,17 @@ export default function RootLayout({
         <link rel="icon" href="../public/images/favicon.ico" sizes="any" />
       </head>
       <body className={openSans.className}>
-        <div className="flex h-full w-full">
+        <div className=" flex w-full">
           <SideBar />
-          <div className="w-full flex flex-col">
+          <div className="h-full w-full">
             <Header />
-            <main className="w-full flex justify-center items-center">
-              <ApolloWrapper>{children}</ApolloWrapper>
-            </main>
+            <div className="w-full h-full flex flex-col relative ">
+              <main className=" flex justify-center items-center w-full">
+                <ApolloWrapper>{children}</ApolloWrapper>
+<Toaster />
+
+              </main>
+            </div>
           </div>
         </div>
       </body>

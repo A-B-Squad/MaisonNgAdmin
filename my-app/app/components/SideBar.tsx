@@ -7,6 +7,7 @@ import { MdKeyboardDoubleArrowUp } from "react-icons/md";
 import { FaRegChartBar } from "react-icons/fa";
 import { IoMenu } from "react-icons/io5";
 import Link from "next/link";
+import { FcAdvertising } from "react-icons/fc";
 
 const SideBar = () => {
   const [isExpanded, setIsExpanded] = useState(true);
@@ -17,7 +18,9 @@ const SideBar = () => {
 
   return (
     <div
-      className={`sideBar flex h-screen sticky top-0 left-0 z-50 bg-mainColorAdminDash  transition-all duration-300 ${isExpanded ? "w-1/5" : " w-[5%]"}`}
+      className={`sideBar flex h-screen sticky top-0 left-0 z-50 bg-mainColorAdminDash  transition-all duration-300 ${
+        isExpanded ? "w-60" : " w-[5%]"
+      }`}
     >
       <div
         className={` shadow md:h-full flex-col justify-between w-full transition-width duration-300`}
@@ -26,7 +29,6 @@ const SideBar = () => {
           <ul className="mt-4">
             <li className="flex w-full py-4 px-4 justify-between text-white cursor-pointer outline-none items-center transition">
               <button
-                
                 className="flex items-center focus:outline-none focus:ring-2 outline-none focus:ring-white"
                 onClick={toggleSidebar}
               >
@@ -99,6 +101,15 @@ const SideBar = () => {
               >
                 <LuNewspaper size={24} />
                 {isExpanded && <span className="text-md ml-2">Factures</span>}
+              </Link>
+            </li>
+            <li className="flex w-full py-4 px-4 justify-between text-white rounded-l-full hover:text-blue-900 hover:bg-gray-100 cursor-pointer items-center transition">
+              <Link
+                href="/Shop"
+                className="flex items-center focus:outline-none focus:ring-2 focus:ring-white"
+              >
+                <FcAdvertising size={24} />
+                {isExpanded && <span className="text-md ml-2">Boutique</span>}
               </Link>
             </li>
             <li className="flex absolute bottom-0 w-full py-4 px-4 justify-between text-white rounded-l-full hover:text-blue-900 hover:bg-gray-100 cursor-pointer items-center transition">

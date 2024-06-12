@@ -11,10 +11,9 @@ import { GET_PACKAGES_QUERY } from "../graph/queries";
 import { useQuery } from "@apollo/client";
 import Stats from "../components/stats";
 
-const DEFAULT_TIMEZONE = 'Africa/Tunis'; // Set default timezone to Tunisia
+const DEFAULT_TIMEZONE = "Africa/Tunis"; // Set default timezone to Tunisia
 
-
-const getStats = (packages:any) => {
+const getStats = (packages: any) => {
   const stats = {
     today: [0, 0],
     lastDay: [0, 0],
@@ -23,9 +22,12 @@ const getStats = (packages:any) => {
     thisYear: [0, 0],
   };
 
-  packages.forEach((pkg:any) => {
+  packages.forEach((pkg: any) => {
     // Convert the timestamp to a date object
-    const packageDate = moment.tz(new Date(parseInt(pkg.createdAt)), DEFAULT_TIMEZONE);
+    const packageDate = moment.tz(
+      new Date(parseInt(pkg.createdAt)),
+      DEFAULT_TIMEZONE
+    );
     if (pkg.status === "DELIVERED") {
       if (packageDate.isSame(moment(), "day")) {
         stats.today[0]++;
@@ -59,16 +61,14 @@ const Dashboard = () => {
   });
 
   const { loading } = useQuery(GET_PACKAGES_QUERY, {
-    onCompleted: (data:any) => {
+    onCompleted: (data: any) => {
       setPackageData(data.getAllPackages);
     },
-    onError: (error:any) => {
+    onError: (error: any) => {
       console.error(error);
     },
   });
 
-
-
   useEffect(() => {
     if (packageData.length) {
       const calculatedStats = getStats(packageData);
@@ -76,20 +76,16 @@ const Dashboard = () => {
     }
   }, [packageData]);
 
-
-
   useEffect(() => {
     if (packageData.length) {
       const calculatedStats = getStats(packageData);
       setStats(calculatedStats);
     }
   }, [packageData]);
-
-
 
   return (
-    <div className="w-full p-8">
-      <Stats/>
+    <div className="w-full p-8 relative">
+      <Stats />
       <div className="w-full mt-10 border shadow-md rounded-sm">
         <h1 className="font-semibold py-5 px-4 border-b-2 w-full">
           Aperçu de votre tableau de bord
