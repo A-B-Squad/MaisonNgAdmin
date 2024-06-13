@@ -11,6 +11,18 @@ const SideBarShopMenu = () => {
       link: "/Shop/CarouselAdvertising", // Add the actual link here
     },
     {
+      title: "À côté de Carousel",
+      link: "/Shop/NextToCarouselAdvertising", // Add the actual link here
+    },
+    {
+      title: "Home Banner",
+      link: "/Shop/BannerAdvertising", // Add the actual link here
+    },
+    {
+      title: "grand publicite",
+      link: "/Shop/BigAdvertising", // Add the actual link here
+    },
+    {
       title: "Home Banner",
       link: "/Shop/BannerAdvertising", // Add the actual link here
     },
@@ -35,7 +47,7 @@ const SideBarShopMenu = () => {
           <li key={index} className="py-1" onClick={() => handleClick(index)}>
             <Link
               className={`py-2 cursor-pointer w-full flex h-full transition-all ${
-                index === activeIndex ? "font-semibold " : "hover:font-semibold"
+                index === activeIndex ? "font-semibold border-b " : "hover:font-semibold hover:border-b "
               }`}
               href={data.link}
             >
