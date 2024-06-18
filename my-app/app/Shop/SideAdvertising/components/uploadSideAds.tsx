@@ -42,16 +42,22 @@ const UploadSideAds = ({
   };
 
   return (
-    <div className="upload-banner-ads">
-      <h1 className="text-3xl font-semibold mb-4">Publicités en Bannière</h1>
+    <div className="upload-banner-ads pt-8">
+      <h1 className="text-3xl font-semibold mb-4">Publicités À Côté</h1>
 
-      <h4 className="text-lg font-medium text-gray-600 mb-4 list-item">
-        {title}
-      </h4>
+  
+
+      <div className="flex items-center mb-4 gap-2">
+        <h4 className="text-lg font-medium text-gray-600  list-item">
+          {title}
+        </h4>
+        <p className="text-gray-400">240PX / 390PX</p>
+      </div>
+
 
       <div className="w-full mb-4 flex justify-center">
         {localLargeImage ? (
-          <div className="w-[230px] h-[390px] relative  border-2">
+          <div className="w-[240px] h-[390px] relative  border-2">
             <Image
               src={localLargeImage}
               alt="image de carrousel"
@@ -64,7 +70,7 @@ const UploadSideAds = ({
           </div>
         ) : (
           <div className="uppercase shadow-xl flex-col border-dashed text-sm w-[230px] h-[390px] tracking-wider text-gray-500 border rounded-md border-lightBlack flex items-center justify-center text-center bg-gray-200 transition-colors">
-            <span>230px / 390px</span>
+            <span>240px / 390px</span>
             <span>png / jpg / gif</span>
           </div>
         )}

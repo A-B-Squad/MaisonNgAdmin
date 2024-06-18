@@ -27,13 +27,13 @@ const SideOfConatct = ({ setInputField, inputField }: any) => {
   }, [topOfLessThen20Ads]);
 
   return (
-    <div className="TopOfLessThen20Banner">
+    <div className="clinetContactSideAds ">
       <UploadSideAds
         localInputField={inputField}
         setLocalInputField={setInputField}
         setLocalLargeImage={setLocalLargeImage}
         localLargeImage={localLargeImage}
-        title={"Nous Contacter"}
+        title={"De Page Pour Nous Contacter"}
       />
     </div>
   );

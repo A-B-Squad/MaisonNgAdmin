@@ -25,3 +25,28 @@ mutation CreateSideAdvertisement($input: [advertisementInput]) {
   createSideAdvertisement(input: $input)
 }
 `;
+export const CREATE_COMPANY_INFO_MUTATIONS = gql`
+mutation CreateOrUpdateCompanyInfo($input: CompanyInfoInput!) {
+  createOrUpdateCompanyInfo(input: $input) {
+    phone
+    deliveringPrice
+    logo
+    instagram
+    facebook
+    location
+    email
+  }
+}
+`;
+export const DELETE_PRODUCT_MUTATIONS = gql`
+mutation DeleteProduct($productId: ID!) {
+  deleteProduct(productId: $productId)
+}
+`;
+export const CREATE_PRODUCT_MUTATIONS = gql`
+mutation CreateProduct($input: ProductInput!) {
+  createProduct(input: $input) {
+    id
+  }
+}
+`;

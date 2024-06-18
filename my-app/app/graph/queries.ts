@@ -15,6 +15,24 @@ export const GET_PACKAGES_QUERY = gql`
   }
 `;
 
+export const CATEGORY_QUERY = gql`
+  query Categories {
+    categories {
+      id
+      name
+      subcategories {
+        id
+        name
+        parentId
+        subcategories {
+          id
+          name
+          parentId
+        }
+      }
+    }
+  }
+`;
 export const SEARCH_PRODUCTS_QUERY = gql`
   query SearchProducts($input: ProductSearchInput!) {
     searchProducts(input: $input) {
@@ -48,6 +66,7 @@ export const SEARCH_PRODUCTS_QUERY = gql`
             Hex
           }
           productDiscounts {
+            dateOfEnd
             price
             newPrice
             Discount {
@@ -66,6 +85,32 @@ export const SEARCH_PRODUCTS_QUERY = gql`
     }
   }
 `;
+export const GET_BRANDS = gql`
+  query FetchBrands {
+    fetchBrands {
+      id
+      logo
+      name
+    }
+  }
+`;
+export const COLORS_QUERY = gql`
+  query Colors {
+    colors {
+      id
+      color
+      Hex
+    }
+  }
+`;
+export const DISCOUNT_PERCENTAGE_QUERY = gql`
+query DiscountsPercentage {
+  DiscountsPercentage {
+    id
+    percentage
+  }
+}
+`;
 export const ADVERTISSMENT_QUERY = gql`
   query AdvertismentByPosition($position: String!) {
     advertismentByPosition(position: $position) {
@@ -73,4 +118,17 @@ export const ADVERTISSMENT_QUERY = gql`
       link
     }
   }
+`;
+export const COMPANY_INFO_QUERY = gql`
+ query CompanyInfo {
+  companyInfo {
+    phone
+    deliveringPrice
+    logo
+    instagram
+    facebook
+    location
+    email
+  }
+}
 `;

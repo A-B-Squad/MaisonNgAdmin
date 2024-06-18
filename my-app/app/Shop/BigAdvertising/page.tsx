@@ -102,11 +102,14 @@ const BigAdvertisingPage = () => {
 
   return (
     <div className="advertising">
-      <div className="container pt-10 pb-32 h-full relative">
-        <h1 className="text-3xl font-semibold mb-4">Publicités en Carrousel</h1>
+      <div className="container  pb-32 h-full relative">
+        <div className="flex items-center mb-4 gap-2">
+          <h1 className="text-3xl font-semibold">Publicités en Home</h1>
+          <p className="text-gray-400">700px / 450px</p>
+        </div>
         <div className="w-full mb-4">
           {image.urlImage ? (
-            <div className="h-[400px] w-[952px] relative border-2">
+            <div className="h-[450px] w-[700px] relative border-2">
               <Image
                 src={image.urlImage}
                 alt="image de carrousel"

@@ -82,7 +82,7 @@ const SideAdvertisingPage = () => {
       InputFieldOfNextToCarouselAds1.link);
   return (
     <div className="advertising">
-      <div className="container flex flex-col gap-8 pt-10 pb-32 h-full relative divide-y">
+      <div className="container flex flex-col gap-8  pb-32 h-full relative divide-y">
         <NextToCarouselAds1
           setInputField={setInputFieldOfNextToCarouselAds1}
           inputField={InputFieldOfNextToCarouselAds1}

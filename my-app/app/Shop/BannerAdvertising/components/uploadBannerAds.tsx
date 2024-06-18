@@ -17,7 +17,6 @@ const UploadBannerAds = ({
   localInputField,
   setLocalInputField,
 }: any) => {
-
   const [localLoadingImages, setLocalLoadingImages] = useState<boolean>(false);
 
   const handleLocalInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -45,10 +44,12 @@ const UploadBannerAds = ({
   return (
     <div className="upload-banner-ads">
       <h1 className="text-3xl font-semibold mb-4">Publicités en Bannière</h1>
-
-      <h4 className="text-lg font-medium text-gray-600 mb-4 list-item">
-        {title}
-      </h4>
+      <div className="flex items-center mb-4 gap-2">
+        <h4 className="text-lg font-medium text-gray-600  list-item">
+          {title}
+        </h4>
+        <p className="text-gray-400">180PX / 952PX</p>
+      </div>
 
       <div className="w-full mb-4">
         {localLargeImage ? (

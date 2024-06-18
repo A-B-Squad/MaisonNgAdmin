@@ -7,6 +7,7 @@ import BackUp from "@/app/components/BackUp";
 import { useToast } from "@/components/ui/use-toast";
 import SideOfNewProduct from "./@SideOfNewProduct/sideOfNewProduct";
 import SideOfPromotion from "./@SideOfPromotion/sideOfPromotion";
+import SideOfConatct from "./@SideOfContact/sideOfContact";
 
 // Define types for the state
 interface ImageData {
@@ -89,7 +90,7 @@ const SideAdvertisingPage = () => {
     (InputFieldSideContact.images && InputFieldSideContact.link);
   return (
     <div className="advertising">
-      <div className="container flex flex-col gap-8 pt-10 pb-32 h-full relative divide-y">
+      <div className="container flex flex-col gap-8  pb-32 h-full relative divide-y">
         <SideOfPromotion
           setInputField={setInputFieldOfSidePromotion}
           inputField={InputFieldOfSidePromotion}
@@ -98,7 +99,7 @@ const SideAdvertisingPage = () => {
           setInputField={setInputFieldSideNewProduct}
           inputField={InputFieldSideNewProduct}
         />
-        <SideOfNewProduct
+        <SideOfConatct
           setInputField={setInputFieldSideContact}
           inputField={InputFieldSideContact}
         />

@@ -32,7 +32,7 @@ const SideOfNewProduct = ({ setInputField, inputField }: any) => {
         setLocalInputField={setInputField}
         setLocalLargeImage={setLocalLargeImage}
         localLargeImage={localLargeImage}
-        title={"À Côté des Nouveaux Produits"}
+        title={" Des Nouveaux Produits"}
       />
     </div>
   );

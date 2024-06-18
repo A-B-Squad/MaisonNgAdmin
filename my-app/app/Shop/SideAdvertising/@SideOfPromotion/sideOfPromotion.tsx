@@ -33,7 +33,7 @@ const SideOfPromotion = ({ setInputField, inputField }: any) => {
         setLocalInputField={setInputField}
         setLocalLargeImage={setLocalLargeImage}
         localLargeImage={localLargeImage}
-        title={"À côté de Offres Promotionnelles"}
+        title={"De Offres Promotionnelles"}
       />
     </div>
   );

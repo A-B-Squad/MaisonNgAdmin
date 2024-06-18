@@ -33,7 +33,7 @@ const NextToCarouselAds2 = ({ setInputField, inputField }: any) => {
         setLocalInputField={setInputField}
         setLocalLargeImage={setLocalLargeImage}
         localLargeImage={localLargeImage}
-        title={"Bottom next to carousel"}
+        title={"En bas à côté du carrousel"}
       />
     </div>
   );

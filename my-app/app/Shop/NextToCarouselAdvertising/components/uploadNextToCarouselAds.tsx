@@ -45,11 +45,13 @@ const UploadNextToCarouselAds = ({
       <h1 className="text-3xl font-semibold mb-4">
         Publicités a coter de carousel
       </h1>
+      <div className="flex items-center mb-4 gap-2">
+        <h4 className="text-lg font-medium text-gray-600  list-item">
+          {title}
+        </h4>
+        <p className="text-gray-400">230PX / 390PX</p>
+      </div>
 
-      <h4 className="text-lg font-medium text-gray-600 mb-4 list-item">
-        {title}
-        <span className="text-gray-200">: 230px / 390px</span>
-      </h4>
 
       <div className="w-full mb-4 flex justify-center">
         {localLargeImage ? (
@@ -94,7 +96,7 @@ const UploadNextToCarouselAds = ({
               onChange={handleLocalInputChange}
             />
             {localInputField?.images && (
-              <div className="relative w-[20rem] h-64 border overflow-hidden rounded-md cursor-pointer">
+              <div className="relative h-[50px] w-[100px] border overflow-hidden rounded-md cursor-pointer">
                 {localLoadingImages && <LoaderSpiner />}
                 <Image
                   src={localInputField.images[0]}
