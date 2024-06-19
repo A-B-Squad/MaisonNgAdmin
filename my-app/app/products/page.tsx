@@ -21,15 +21,13 @@ const Products = () => {
   const query = searchParams?.get("q");
   const order = searchParams?.get("order");
 
-  console.log("====================================");
-  console.log("query: ", query, " order: ", order);
-  console.log("====================================");
+
   const [products, setProducts] = useState<any>([]);
   const [showDeleteAlert, setShowDeleteAlert] = useState(false);
   const [productIdToDelete, setProductIdToDelete] = useState<string | null>(
     null
   );
-  const pageSize = 5;
+  const pageSize = 10;
   const [page, setPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -267,9 +265,19 @@ const Products = () => {
                           </td>
                           <td className="Edits px-4 py-3 text-sm border">
                             <div className="flex justify-center items-center gap-2">
-                              <button className="p-2 w-10 h-10 rounded-full border-2">
+                              <Link
+                                target="_blank"
+                                href={{
+                                  pathname: "/UpdateProduct",
+                                  query: {
+                                    productId: product.id,
+                                  },
+                                }}
+                                className="p-2 w-10 h-10 rounded-full border-2"
+                              >
                                 <FiEdit2 size={20} />
-                              </button>
+                              </Link>
+
                               <Link
                                 target="_blank"
                                 href={{
@@ -347,7 +355,10 @@ const Products = () => {
                     </ul>
                   </div>
                 )}
-                <Link href={"/CreateProduct"} className="text-white h-12 p-3 rounded-md bg-mainColorAdminDash">
+                <Link
+                  href={"/CreateProduct"}
+                  className="text-white h-12 p-3 rounded-md bg-mainColorAdminDash"
+                >
                   Ajouter un produit +
                 </Link>
               </div>

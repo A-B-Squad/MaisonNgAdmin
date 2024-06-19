@@ -132,3 +132,55 @@ export const COMPANY_INFO_QUERY = gql`
   }
 }
 `;
+
+export const PRODUCT_BY_ID_QUERY = gql`
+ query ProductById($productByIdId: ID!) {
+  productById(id: $productByIdId) {
+    id
+    name
+    price
+    isVisible
+    reference
+    description
+    inventory
+    solde
+    images
+    createdAt
+    categories {
+      id
+      name
+      subcategories {
+        id
+        name
+        subcategories {
+          id
+          name
+        }
+      }
+    }
+    productDiscounts {
+      id
+      price
+      newPrice
+      dateOfEnd
+      dateOfStart
+    }
+    Colors {
+      id
+      color
+      Hex
+    }
+    Brand {
+      id
+      name
+      logo
+    }
+    attributes {
+      id
+      name
+      value
+    }
+  }
+}
+
+`;
