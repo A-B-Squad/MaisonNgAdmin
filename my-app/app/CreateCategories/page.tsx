@@ -2,33 +2,18 @@
 
 import React, { useEffect, useState } from "react";
 import { LuPackage2 } from "react-icons/lu";
+import { TbPackages } from "react-icons/tb";
+import { MdKeyboardDoubleArrowUp } from "react-icons/md";
+import { LuUsers2 } from "react-icons/lu";
 import { MdOutlineAttachMoney } from "react-icons/md";
 import moment from "moment-timezone";
-import { useQuery } from "@apollo/client";
 import { GET_PACKAGES_QUERY } from "../graph/queries";
+import { useQuery } from "@apollo/client";
 import Stats from "../components/stats";
-import SmallSpinner from "../components/SmallSpinner";
 
-const DEFAULT_TIMEZONE = "Africa/Tunis";
+const DEFAULT_TIMEZONE = "Africa/Tunis"; // Set default timezone to Tunisia
 
-interface Checkout {
-  id: string;
-  total: number;
-}
-
-interface Package {
-  id: string;
-  checkoutId: string;
-  status: string;
-  createdAt: string;
-  Checkout: Checkout;
-}
-
-interface PackageData {
-  getAllPackages: Package[];
-}
-
-const getStats = (packages: Package[]) => {
+const getStats = (packages: any) => {
   const stats = {
     today: [0, 0],
     lastDay: [0, 0],
@@ -37,8 +22,12 @@ const getStats = (packages: Package[]) => {
     thisYear: [0, 0],
   };
 
-  packages.forEach((pkg) => {
-    const packageDate = moment.tz(parseInt(pkg.createdAt), DEFAULT_TIMEZONE);
+  packages.forEach((pkg: any) => {
+    // Convert the timestamp to a date object
+    const packageDate = moment.tz(
+      new Date(parseInt(pkg.createdAt)),
+      DEFAULT_TIMEZONE
+    );
     if (pkg.status === "DELIVERED") {
       if (packageDate.isSame(moment(), "day")) {
         stats.today[0]++;
@@ -52,8 +41,7 @@ const getStats = (packages: Package[]) => {
       } else if (packageDate.isSame(moment(), "month")) {
         stats.thisMonth[0]++;
         stats.thisMonth[1] += pkg.Checkout.total;
-      }
-      if (packageDate.isSame(moment(), "year")) {
+      } else if (packageDate.isSame(moment(), "year")) {
         stats.thisYear[0]++;
         stats.thisYear[1] += pkg.Checkout.total;
       }
@@ -62,8 +50,8 @@ const getStats = (packages: Package[]) => {
   return stats;
 };
 
-const Dashboard: React.FC = () => {
-  const [packageData, setPackageData] = useState<Package[]>([]);
+const Dashboard = () => {
+  const [packageData, setPackageData] = useState([]);
   const [stats, setStats] = useState({
     today: [0, 0],
     lastDay: [0, 0],
@@ -72,13 +60,11 @@ const Dashboard: React.FC = () => {
     thisYear: [0, 0],
   });
 
-  const { loading, data, error } = useQuery<PackageData>(GET_PACKAGES_QUERY, {
-    onCompleted: (data) => {
-      if (data) {
-        setPackageData(data.getAllPackages);
-      }
+  const { loading } = useQuery(GET_PACKAGES_QUERY, {
+    onCompleted: (data: any) => {
+      setPackageData(data.getAllPackages);
     },
-    onError: (error) => {
+    onError: (error: any) => {
       console.error(error);
     },
   });
@@ -90,16 +76,12 @@ const Dashboard: React.FC = () => {
     }
   }, [packageData]);
 
-  const deliveredPackagesCount = packageData.filter(
-    (pkg) => pkg.status === "DELIVERED"
-  ).length;
-
-  const totalEarningsDelivered = packageData.reduce(
-    (total, pkg) =>
-      pkg.status === "DELIVERED" ? total + pkg.Checkout.total : total,
-    0
-  );
-
+  useEffect(() => {
+    if (packageData.length) {
+      const calculatedStats = getStats(packageData);
+      setStats(calculatedStats);
+    }
+  }, [packageData]);
 
   return (
     <div className="w-full p-8 relative">
@@ -115,29 +97,29 @@ const Dashboard: React.FC = () => {
               Commandes
             </h1>
             <div className="m-5 border rounded-sm flex flex-col">
-              <div className="flex justify-between items-center border-b-2 p-4">
+              <div className="flex justify-between border-b-2 p-4">
                 <span className="font-bold text-gray-600">Aujourd’hui</span>
-                {loading ? <SmallSpinner /> : <span className="font-bold">{stats.today[0]}</span>}
+                <span className="font-bold">{stats.today[0]}</span>
               </div>
-              <div className="flex justify-between items-center border-b-2 p-4">
+              <div className="flex justify-between border-b-2 p-4">
                 <span className="font-bold text-gray-600">Hier</span>
-                {loading ? <SmallSpinner /> : <span className="font-bold">{stats.lastDay[0]}</span>}
+                <span className="font-bold">{stats.lastDay[0]}</span>
               </div>
-              <div className="flex justify-between items-center border-b-2 p-4">
+              <div className="flex justify-between border-b-2 p-4">
                 <span className="font-bold text-gray-600">Cette semaine</span>
-                {loading ? <SmallSpinner /> : <span className="font-bold">{stats.thisWeek[0]}</span>}
+                <span className="font-bold">{stats.thisWeek[0]}</span>
               </div>
-              <div className="flex justify-between items-center border-b-2 p-4">
+              <div className="flex justify-between border-b-2 p-4">
                 <span className="font-bold text-gray-600">Ce mois-ci</span>
-                {loading ? <SmallSpinner /> : <span className="font-bold">{stats.thisMonth[0]}</span>}
+                <span className="font-bold">{stats.thisMonth[0]}</span>
               </div>
-              <div className="flex justify-between items-center border-b-2 p-4">
+              <div className="flex justify-between border-b-2 p-4">
                 <span className="font-bold text-gray-600">Cette année</span>
-                {loading ? <SmallSpinner /> : <span className="font-bold">{stats.thisYear[0]}</span>}
+                <span className="font-bold">{stats.thisYear[0]}</span>
               </div>
-              <div className="flex justify-between items-center border-b-2 p-4">
-                <span className="font-bold text-gray-600">Total des livraisons</span>
-                {loading ? <SmallSpinner /> : <span className="font-bold">{deliveredPackagesCount}</span>}
+              <div className="flex justify-between border-b-2 p-4">
+                <span className="font-bold text-gray-600">Total</span>
+                <span className="font-bold">{packageData.length}</span>
               </div>
             </div>
           </div>
@@ -147,29 +129,36 @@ const Dashboard: React.FC = () => {
               Gains
             </h1>
             <div className="m-5 border rounded-sm flex flex-col">
-              <div className="flex justify-between items-center border-b-2 p-4">
+              <div className="flex justify-between border-b-2 p-4">
                 <span className="font-bold text-gray-600">Aujourd’hui</span>
-                {loading ? <SmallSpinner /> : <span className="font-bold">{stats.today[1]} TND</span>}
+                <span className="font-bold">{stats.today[1]} TND</span>
               </div>
-              <div className="flex justify-between items-center border-b-2 p-4">
+              <div className="flex justify-between border-b-2 p-4">
                 <span className="font-bold text-gray-600">Hier</span>
-                {loading ? <SmallSpinner /> : <span className="font-bold">{stats.lastDay[1]} TND</span>}
+                <span className="font-bold">{stats.lastDay[1]} TND</span>
               </div>
-              <div className="flex justify-between items-center border-b-2 p-4">
+              <div className="flex justify-between border-b-2 p-4">
                 <span className="font-bold text-gray-600">Cette semaine</span>
-                {loading ? <SmallSpinner /> : <span className="font-bold">{stats.thisWeek[1]} TND</span>}
+                <span className="font-bold">{stats.thisWeek[1]} TND</span>
               </div>
-              <div className="flex justify-between items-center border-b-2 p-4">
+              <div className="flex justify-between border-b-2 p-4">
                 <span className="font-bold text-gray-600">Ce mois-ci</span>
-                {loading ? <SmallSpinner /> : <span className="font-bold">{stats.thisMonth[1]} TND</span>}
+                <span className="font-bold">{stats.thisMonth[1]} TND</span>
               </div>
-              <div className="flex justify-between items-center border-b-2 p-4">
+              <div className="flex justify-between border-b-2 p-4">
                 <span className="font-bold text-gray-600">Cette année</span>
-                {loading ? <SmallSpinner /> : <span className="font-bold">{stats.thisYear[1]} TND</span>}
+                <span className="font-bold">{stats.thisYear[1]} TND</span>
               </div>
-              <div className="flex justify-between items-center border-b-2 p-4">
-                <span className="font-bold text-gray-600">Total des gains livrés</span>
-                {loading ? <SmallSpinner /> : <span className="font-bold">{totalEarningsDelivered} TND</span>}
+              <div className="flex justify-between border-b-2 p-4">
+                <span className="font-bold text-gray-600">Total</span>
+                <span className="font-bold">
+                  {stats.today[1] +
+                    stats.lastDay[1] +
+                    stats.thisWeek[1] +
+                    stats.thisMonth[1] +
+                    stats.thisYear[1]}{" "}
+                  TND
+                </span>
               </div>
             </div>
           </div>

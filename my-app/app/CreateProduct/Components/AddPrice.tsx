@@ -168,7 +168,6 @@ const AddPrice = ({
             <input
               type="number"
               className="w-full p-2 border border-gray-300 rounded mt-1"
-              value={manualDiscountPrice}
               onChange={handleManualDiscountPriceChange}
               min="0"
               step="0.01"

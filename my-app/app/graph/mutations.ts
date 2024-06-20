@@ -53,3 +53,13 @@ mutation UpdateProduct($productId: ID!, $input: ProductInput!) {
   updateProduct(productId: $productId, input: $input)
 }
 `;
+export const CREATE_CATEGORY_MUTATIONS = gql`
+mutation CreateCategory($input: CreateCategoryInput!) {
+  createCategory(input: $input) {
+    id
+    name
+    bigImage
+    smallImage
+  }
+}
+`;

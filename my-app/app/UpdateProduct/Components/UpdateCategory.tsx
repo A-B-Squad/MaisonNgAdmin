@@ -109,10 +109,15 @@ const ChoiceCategory = ({ selectedIds, setSelectedIds }: any) => {
   };
 
   useEffect(() => {
-    console.log("Selected IDs:", getSelectedIdsArray());
+    getSelectedIdsArray();
   }, [selectedIds]);
 
-  if (loading) return <div className=" h-52 relative border bg-[#ffffffc2] rounded-md flex items-center justify-center w-full"><Load/></div>;
+  if (loading)
+    return (
+      <div className=" h-52 relative border bg-[#ffffffc2] rounded-md flex items-center justify-center w-full">
+        <Load />
+      </div>
+    );
   if (error) return <p>Erreur : {error.message}</p>;
 
   return (
@@ -121,7 +126,10 @@ const ChoiceCategory = ({ selectedIds, setSelectedIds }: any) => {
         <label className="block border-b py-2 w-full text-gray-700 font-semibold tracking-wider">
           Catégorie
         </label>
-        <Select value={selectedIds.categoryId || ''} onValueChange={handleCategoryChange}>
+        <Select
+          value={selectedIds.categoryId || ""}
+          onValueChange={handleCategoryChange}
+        >
           <SelectTrigger className="w-full p-2 border border-gray-300 rounded mt-1">
             <SelectValue placeholder="Sélectionner une catégorie" />
           </SelectTrigger>
@@ -142,7 +150,10 @@ const ChoiceCategory = ({ selectedIds, setSelectedIds }: any) => {
         <label className="block border-b py-2 w-full text-gray-700 font-semibold tracking-wider">
           Sous-catégorie
         </label>
-        <Select value={selectedIds.subcategoryId || ''} onValueChange={handleSubcategoryChange}>
+        <Select
+          value={selectedIds.subcategoryId || ""}
+          onValueChange={handleSubcategoryChange}
+        >
           <SelectTrigger className="w-full p-2 border border-gray-300 rounded mt-1">
             <SelectValue placeholder="Sélectionner une sous-catégorie" />
           </SelectTrigger>
@@ -163,7 +174,10 @@ const ChoiceCategory = ({ selectedIds, setSelectedIds }: any) => {
         <label className="block border-b py-2 w-full text-gray-700 font-semibold tracking-wider">
           Sous-sous-catégorie
         </label>
-        <Select value={selectedIds.subSubcategoryId || ''} onValueChange={handleSubSubcategoryChange}>
+        <Select
+          value={selectedIds.subSubcategoryId || ""}
+          onValueChange={handleSubSubcategoryChange}
+        >
           <SelectTrigger className="w-full p-2 border border-gray-300 rounded mt-1">
             <SelectValue placeholder="Sélectionner une sous-sous-catégorie" />
           </SelectTrigger>

@@ -55,7 +55,6 @@ const CreateProduct = () => {
       !title ||
       !description ||
       !uploadedImages.length ||
-      !originalPrice ||
       !selectedIds.categoryId
     ) {
       toast({
@@ -66,19 +65,53 @@ const CreateProduct = () => {
       });
       return;
     }
+  
     const discount = {
       dateOfEnd: dateOfEndDiscount,
       dateOfStart: dateOfStartDiscount,
       discountId: selectedDiscountId,
       newPrice: manualDiscountPrice,
     };
-
+  
     const hasDiscount =
-      discount.dateOfEnd && discount.dateOfStart && discount.newPrice;
-
+      discount.dateOfStart && discount.dateOfEnd && (manualDiscountPrice || discountPercentage);
+  
+    if (hasDiscount) {
+      if (!discount.dateOfStart || !discount.dateOfEnd) {
+        toast({
+          title: "Erreur de création",
+          className: "text-white bg-red-600 border-0",
+          description: "Veuillez remplir les dates de début et de fin de remise.",
+          duration: 5000,
+        });
+        return;
+      }
+      if (!manualDiscountPrice && !discountPercentage) {
+        toast({
+          title: "Erreur de création",
+          className: "text-white bg-red-600 border-0",
+          description: "Veuillez fournir un prix de remise ou un pourcentage.",
+          duration: 5000,
+        });
+        return;
+      }
+    }
+  
+    if (!originalPrice && !hasDiscount) {
+      toast({
+        title: "Erreur de création",
+        className: "text-white bg-red-600 border-0",
+        description: "Veuillez fournir un prix ou une remise.",
+        duration: 5000,
+      });
+      return;
+    }
+  
     const productData = {
       input: {
-        attributeInputs: attributes,
+        attributeInputs: attributes.filter(
+          (attr) => attr.name.trim() !== "" && attr.value.trim() !== ""
+        ),
         brandId: brand,
         categories: [
           selectedIds.categoryId,
@@ -96,9 +129,7 @@ const CreateProduct = () => {
         ...(hasDiscount && { discount: [discount] }),
       },
     };
-
-    console.log(productData);
-
+  
     createProductMutation({
       variables: productData,
       onCompleted() {
@@ -123,7 +154,7 @@ const CreateProduct = () => {
           subSubcategoryId: "",
         });
         setBrand("");
-
+  
         toast({
           title: "Produit créé",
           className: "text-white bg-mainColorAdminDash border-0",
@@ -133,6 +164,7 @@ const CreateProduct = () => {
       },
     });
   };
+  
 
   return (
     <div className="container mx-auto py-10 bg-slate-100 w-full">

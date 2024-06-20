@@ -8,18 +8,16 @@ import { SEARCH_PRODUCTS_QUERY } from "../graph/queries";
 import { useLazyQuery, useMutation } from "@apollo/client";
 
 import moment from "moment";
-import { useSearchParams } from "next/navigation";
-import Loading from "./loading";
 import Image from "next/image";
 import prepRoute from "../Helpers/_prepRoute";
 import Link from "next/link";
 import { DELETE_PRODUCT_MUTATIONS } from "../graph/mutations";
 import SearchBar from "../components/SearchBar";
+import SmallSpinner from "../components/SmallSpinner";
 
-const Products = () => {
-  const searchParams = useSearchParams();
-  const query = searchParams?.get("q");
-  const order = searchParams?.get("order");
+const Products = ({ searchParams }: any) => {
+  const query = searchParams?.q;
+  const order = searchParams?.order;
 
 
   const [products, setProducts] = useState<any>([]);
@@ -150,16 +148,18 @@ const Products = () => {
   };
 
   return (
-    <div className="w-full p-8">
-      <Stats />
-      <div className="w-full mt-10 border shadow-md rounded-sm">
+    <div className="w-full ">
+      <div className="container w-full mt-10 border shadow-md rounded-sm">
         <h1 className="font-bold text-2xl py-5 px-4 border-b-2 w-full">
           Produits{" "}
         </h1>
         <div className="mt-5 ">
           <SearchBar />
           {loading ? (
-            <Loading />
+            <div className="flex justify-center py-10">
+
+              <SmallSpinner />
+            </div>
           ) : (
             <section className="container mx-auto py-6 px-3 font-mono relative">
               {showDeleteAlert && (

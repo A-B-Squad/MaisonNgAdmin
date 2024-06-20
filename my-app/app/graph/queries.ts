@@ -14,6 +14,12 @@ export const GET_PACKAGES_QUERY = gql`
     }
   }
 `;
+export const GET_ALL_USERS_QUERY = gql`
+query FetchAllUsers {
+  fetchAllUsers {
+  id  
+  }
+}`;
 
 export const CATEGORY_QUERY = gql`
   query Categories {
@@ -118,6 +124,13 @@ export const ADVERTISSMENT_QUERY = gql`
       link
     }
   }
+`;
+export const PRODUCT_QUERY = gql`
+ query Products {
+  products {
+  id  
+  }
+}
 `;
 export const COMPANY_INFO_QUERY = gql`
  query CompanyInfo {

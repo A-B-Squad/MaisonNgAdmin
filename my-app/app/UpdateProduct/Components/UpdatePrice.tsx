@@ -27,10 +27,9 @@ const UpdatePrice = ({
   dateOfStartDiscount,
   setDateOfStartDiscount,
   setSelectedDicountId,
+  discountType,
+  setDiscountType,
 }: any) => {
-  const [discountType, setDiscountType] = useState<"percentage" | "manual">(
-    "percentage"
-  );
   const [discountedPrice, setDiscountedPrice] = useState<string>("0.00");
   const { data, loading, error } = useQuery(DISCOUNT_PERCENTAGE_QUERY);
 
@@ -47,25 +46,31 @@ const UpdatePrice = ({
   const handleDiscountPercentageChange = (value: string) => {
     const percentage = parseInt(value) || 0;
     setDiscountPercentage(percentage);
-    
+  
     // Find the corresponding discount option and get its ID
-    const selectedOption = discountOptions.find((option: { percentage: number; }) => option.percentage === percentage);
+    const selectedOption = discountOptions.find(
+      (option: { percentage: number }) => option.percentage === percentage
+    );
+    
     if (selectedOption) {
       setSelectedDicountId(selectedOption.id);
     } else {
-      setSelectedDicountId("");
+      setSelectedDicountId(null);
     }
+  
     calculateDiscountedPrice(originalPrice, percentage);
   };
 
   const handleManualDiscountPriceChange = (
     e: ChangeEvent<HTMLInputElement>
   ) => {
-    const discountPrice = parseFloat(e.target.value) || 0;
+    const discountPrice = Number(e.target.value) || 0;
+
     setManualDiscountPrice(discountPrice);
-    setSelectedDicountId(""); 
+    setSelectedDicountId("");
     calculateManualDiscountedPrice(originalPrice, discountPrice);
   };
+
 
   const handleDiscountTypeChange = (value: string) => {
     const type = value as "percentage" | "manual";
@@ -80,8 +85,9 @@ const UpdatePrice = ({
   const calculateDiscountedPrice = (price: number, percentage: number) => {
     const discount = (price * percentage) / 100;
     const finalPrice = price - discount;
-    setManualDiscountPrice(finalPrice)
-
+   
+    setManualDiscountPrice(finalPrice);
+    
     setDiscountedPrice(finalPrice.toFixed(2));
   };
 
@@ -90,12 +96,8 @@ const UpdatePrice = ({
     discountPrice: number
   ) => {
     const finalPrice = price - discountPrice;
-    setManualDiscountPrice(finalPrice)
+    setManualDiscountPrice(finalPrice);
     setDiscountedPrice(finalPrice.toFixed(2));
-  };
-
-  const formatDate = (date: Date | null): string => {
-    return date ? format(date, "yyyy-MM-dd HH:mm:ss.SSS") : "";
   };
 
   if (loading) return <p>Loading...</p>;
@@ -168,7 +170,7 @@ const UpdatePrice = ({
             <input
               type="number"
               className="w-full p-2 border border-gray-300 rounded mt-1"
-              value={manualDiscountPrice}
+              placeholder={manualDiscountPrice}
               onChange={handleManualDiscountPriceChange}
               min="0"
               step="0.01"

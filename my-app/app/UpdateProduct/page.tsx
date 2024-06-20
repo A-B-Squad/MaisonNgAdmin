@@ -8,15 +8,11 @@ import UpdatePrice from "./Components/UpdatePrice";
 import UpdateAttribute from "./Components/UpdateAttributes";
 import UpdateImage from "./Components/UploadImages";
 import { useMutation, useQuery } from "@apollo/client";
-import {
-  CREATE_PRODUCT_MUTATIONS,
-  UPDATE_PRODUCT_MUTATIONS,
-} from "../graph/mutations";
+import { UPDATE_PRODUCT_MUTATIONS } from "../graph/mutations";
 import UpdateReference from "./Components/UpdateReference";
 import UpdateColors from "./Components/UpdateColors";
 import { useToast } from "@/components/ui/use-toast";
 import { PRODUCT_BY_ID_QUERY } from "../graph/queries";
-import { useSearchParams } from "next/navigation";
 import Load from "./Load";
 
 interface Attribute {
@@ -30,6 +26,9 @@ const UpdateProduct = ({ searchParams }: any) => {
   const [attributes, setAttributes] = useState<Attribute[]>([
     { name: "", value: "" },
   ]);
+  const [discountType, setDiscountType] = useState<"percentage" | "manual">(
+    "percentage"
+  );
   const [uploadedImages, setUploadedImages] = useState<string[]>([]);
   const [title, setTitle] = useState<string>("");
   const [description, setDescription] = useState<string>("");
@@ -47,6 +46,7 @@ const UpdateProduct = ({ searchParams }: any) => {
   );
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const [visibility, setVisibility] = useState<boolean>(true);
+  const [discountedPrice, setDiscountedPrice] = useState<string>("0.00");
 
   const [selectedIds, setSelectedIds] = useState({
     categoryId: "",
@@ -99,13 +99,16 @@ const UpdateProduct = ({ searchParams }: any) => {
         });
       }
 
-      if (product.discount && product.discount.length > 0) {
-        const discount = product.discount[0];
-        setDiscountPercentage(discount.percentage || 0);
-        setManualDiscountPrice(discount.newPrice || 0);
-        setDateOfStartDiscount(discount.dateOfStart || null);
-        setDateOfEndDiscount(discount.dateOfEnd || null);
-        setSelectedDicountId(discount.discountId || null);
+      if (product.productDiscounts && product.productDiscounts.length > 0) {
+        const discount = product.productDiscounts[0];
+
+        if (discount.discountId) {
+          setDiscountType("percentage");
+          setSelectedDicountId(discount.discountId);
+        } else {
+          setDiscountType("manual");
+          setManualDiscountPrice(product.price - discount.newPrice);
+        }
       }
     }
   }, [productDataById, loading, error]);
@@ -115,7 +118,6 @@ const UpdateProduct = ({ searchParams }: any) => {
       !title ||
       !description ||
       !uploadedImages.length ||
-      !originalPrice ||
       !selectedIds.categoryId
     ) {
       toast({
@@ -134,13 +136,57 @@ const UpdateProduct = ({ searchParams }: any) => {
       newPrice: manualDiscountPrice,
     };
 
-    const hasDiscount =
-      discount.dateOfEnd && discount.dateOfStart && discount.newPrice;
+    const hasDiscount = manualDiscountPrice || selectedDiscountId;
+console.log(discount);
+
+    if (!!hasDiscount) {
+      console.log(hasDiscount);
+      if (!discount.dateOfStart || !discount.dateOfEnd) {
+        toast({
+          title: "Erreur de mise à jour",
+          className: "text-white bg-red-600 border-0",
+          description:
+            "Veuillez remplir les dates de début et de fin de remise.",
+          duration: 5000,
+        });
+        return;
+      }
+      if (discountType === "manual" && !manualDiscountPrice) {
+        toast({
+          title: "Erreur de mise à jour",
+          className: "text-white bg-red-600 border-0",
+          description: "Veuillez fournir un prix de remise manuel.",
+          duration: 5000,
+        });
+        return;
+      }
+      if (discountType === "percentage" && !selectedDiscountId) {
+        toast({
+          title: "Erreur de mise à jour",
+          className: "text-white bg-red-600 border-0",
+          description: "Veuillez sélectionner un type de remise.",
+          duration: 5000,
+        });
+        return;
+      }
+    }
+
+    if (!originalPrice && !hasDiscount) {
+      toast({
+        title: "Erreur de mise à jour",
+        className: "text-white bg-red-600 border-0",
+        description: "Veuillez fournir un prix ou une remise.",
+        duration: 5000,
+      });
+      return;
+    }
 
     const productData = {
       productId: productId,
       input: {
-        attributeInputs: attributes,
+        attributeInputs: attributes.filter(
+          (attr) => attr.name.trim() !== "" && attr.value.trim() !== ""
+        ),
         brandId: brand,
         categories: [
           selectedIds.categoryId,
@@ -183,21 +229,20 @@ const UpdateProduct = ({ searchParams }: any) => {
           subSubcategoryId: "",
         });
         setBrand("");
-
+        window.close();
         toast({
           title: "Produit mis à jour",
           className: "text-white bg-mainColorAdminDash border-0",
           description: "Le produit a été mis à jour avec succès.",
           duration: 5000,
         });
-        window.close();
       },
     });
   };
 
   if (loading)
     return (
-      <div className="h-52 relative border bg-[#ffffffc2] rounded-md flex items-center justify-center w-full">
+      <div className="h-dvh relative overflow-hidden border bg-[#ffffffc2] rounded-md flex items-center justify-center w-full">
         <Load />
       </div>
     );
@@ -238,6 +283,8 @@ const UpdateProduct = ({ searchParams }: any) => {
             setDateOfStartDiscount={setDateOfStartDiscount}
             selectedDiscountId={selectedDiscountId}
             setSelectedDicountId={setSelectedDicountId}
+            discountType={discountType}
+            setDiscountType={setDiscountType}
           />
 
           <UpdateImage
@@ -276,7 +323,10 @@ const UpdateProduct = ({ searchParams }: any) => {
           />
           <UpdateBrand setBrand={setBrand} selectedBrandId={brand} />
           <UpdateInventory stock={stock} setStock={setStock} />
-          <UpdateColors selectedColor={selectedColor} setSelectedColor={setSelectedColor} />
+          <UpdateColors
+            selectedColor={selectedColor}
+            setSelectedColor={setSelectedColor}
+          />
           <UpdateReference reference={reference} setReference={setReference} />
         </div>
       </div>
