@@ -22,18 +22,24 @@ query FetchAllUsers {
 }`;
 
 export const CATEGORY_QUERY = gql`
-  query Categories {
+ query Categories {
     categories {
       id
       name
+      bigImage
+      smallImage
       subcategories {
         id
         name
         parentId
+        bigImage
+        smallImage
         subcategories {
           id
           name
           parentId
+          bigImage
+          smallImage
         }
       }
     }

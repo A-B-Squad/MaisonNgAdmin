@@ -76,6 +76,15 @@ const SideBar = () => {
             </li>
             <li className="flex w-full py-4 px-4 justify-between text-white rounded-l-full hover:text-blue-900 hover:bg-gray-100 cursor-pointer items-center transition">
               <Link
+                href="/ "
+                className="flex items-center focus:outline-none focus:ring-2 focus:ring-white"
+              >
+                <LuUsers2 size={24} />
+                {isExpanded && <span className="text-md ml-2">Categories</span>}
+              </Link>
+            </li>
+            <li className="flex w-full py-4 px-4 justify-between text-white rounded-l-full hover:text-blue-900 hover:bg-gray-100 cursor-pointer items-center transition">
+              <Link
                 href="/clients"
                 className="flex items-center focus:outline-none focus:ring-2 focus:ring-white"
               >

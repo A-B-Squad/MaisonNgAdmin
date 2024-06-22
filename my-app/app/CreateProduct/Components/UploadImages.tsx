@@ -23,12 +23,12 @@ const UploadImage = ({ uploadedImages, setUploadedImages }: any) => {
 
   return (
     <div className="upload-image bg-white p-6 rounded-lg shadow-lg w-full mx-auto">
-      <h3 className="text-lg font-semibold text-gray-700 mb-4">Upload Image</h3>
+      <h3 className="text-lg font-bold mb-4">Upload Image</h3>
       <CldUploadWidget
         uploadPreset="MaisonNg"
         onSuccess={(result, { widget }) => {
           handleSuccessUpload(result);
-          widget.close();
+          // widget.close();
         }}
       >
         {({ open }) => (

@@ -19,12 +19,13 @@ const Products = ({ searchParams }: any) => {
   const query = searchParams?.q;
   const order = searchParams?.order;
 
-
   const [products, setProducts] = useState<any>([]);
-  const [showDeleteAlert, setShowDeleteAlert] = useState(false);
-  const [productIdToDelete, setProductIdToDelete] = useState<string | null>(
-    null
-  );
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+
+  const [productToDelete, setProductToDelete] = useState<{
+    id: string;
+    name: string;
+  } | null>(null);
   const pageSize = 10;
   const [page, setPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
@@ -38,20 +39,24 @@ const Products = ({ searchParams }: any) => {
     return moment(parseInt(timestamp, 10)).format("DD/MM/YYYY");
   };
 
-  const handleDeleteProduct = async (productId: string) => {
+  const [searchProducts] = useLazyQuery(SEARCH_PRODUCTS_QUERY);
+
+  const handleDeleteProduct = async () => {
+    if (!productToDelete) return;
+
     try {
       await deleteProductMutation({
         variables: {
-          productId: productId,
+          productId: productToDelete.id,
         },
       });
-      fetchProducts(); // Refetch products after deletion
+      fetchProducts();
+      setProductToDelete(null);
+      setShowDeleteModal(false);
     } catch (error) {
       console.error("Error deleting product:", error);
     }
   };
-
-  const [searchProducts] = useLazyQuery(SEARCH_PRODUCTS_QUERY);
 
   const fetchProducts = useCallback(async () => {
     setLoading(true);
@@ -149,46 +154,21 @@ const Products = ({ searchParams }: any) => {
 
   return (
     <div className="w-full ">
-      <div className="container w-full mt-10 border shadow-md rounded-sm">
+      <div className="container w-full  border shadow-md rounded-sm">
         <h1 className="font-bold text-2xl py-5 px-4 border-b-2 w-full">
           Produits{" "}
+          <span className="text-gray-600 font-medium text-base">
+            ({products.length || 0})
+          </span>
         </h1>
         <div className="mt-5 ">
-          <SearchBar />
+          <SearchBar page="products" />
           {loading ? (
             <div className="flex justify-center py-10">
-
               <SmallSpinner />
             </div>
           ) : (
             <section className="container mx-auto py-6 px-3 font-mono relative">
-              {showDeleteAlert && (
-                <div className="absolute w-full h-full bg-lightBlack flex justify-center items-center">
-                  <div className="w-4/5 bg-white rounded-md border p-4">
-                    <p>Voulez-vous vraiment supprimer ce produit ?</p>
-                    <div className="flex justify-end gap-4 mt-4">
-                      <button
-                        className="px-4 py-2 rounded-md bg-gray-300"
-                        onClick={() => setShowDeleteAlert(false)}
-                      >
-                        Annuler
-                      </button>
-                      <button
-                        className="px-4 py-2 rounded-md bg-red-500 text-white"
-                        onClick={() => {
-                          if (productIdToDelete) {
-                            handleDeleteProduct(productIdToDelete);
-                            setShowDeleteAlert(false);
-                            setProductIdToDelete(null);
-                          }
-                        }}
-                      >
-                        Supprimer
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              )}
               <div className="w-full mb-8 overflow-hidden rounded-lg shadow-lg">
                 <div className="w-full overflow-x-auto">
                   <table className="w-full">
@@ -209,10 +189,13 @@ const Products = ({ searchParams }: any) => {
                         <tr className="text-gray-700" key={product.id}>
                           <td className="Image px-4 py-3 border">
                             <div className="flex items-center text-sm">
-                              <div className="relative w-8 h-8 mr-3 rounded-full md:block">
+                              <div className="relative w-12 h-12 mr-3 rounded-full md:block">
                                 <Image
                                   className="object-cover w-full h-full rounded-full"
-                                  src={product.images[0]}
+                                  src={
+                                    product.images[0] ||
+                                    "https://res.cloudinary.com/dc1cdbirz/image/upload/v1718970701/b23xankqdny3n1bgrvjz.png"
+                                  }
                                   layout="fill"
                                   alt=""
                                   loading="lazy"
@@ -308,8 +291,12 @@ const Products = ({ searchParams }: any) => {
                               <button
                                 type="button"
                                 onClick={() => {
-                                  setProductIdToDelete(product.id);
-                                  setShowDeleteAlert(true);
+                                  setProductToDelete({
+                                    id: product.id,
+                                    name: product.name,
+                                  });
+
+                                  setShowDeleteModal(true);
                                 }}
                                 className="p-2 w-10 h-10 rounded-full border-2"
                               >
@@ -366,6 +353,42 @@ const Products = ({ searchParams }: any) => {
           )}
         </div>
       </div>
+      {/* Delete Modal */}
+      {showDeleteModal && (
+        <div
+          className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full"
+          id="my-modal"
+        >
+          <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+            <div className="mt-3 text-center">
+              <h3 className="text-lg leading-6 font-medium text-gray-900">
+                Delete Product
+              </h3>
+              <div className="mt-2 px-7 py-3">
+                <p className="text-sm text-gray-500">
+                  Voulez-vous vraiment supprimer ce produit ?"
+                  {productToDelete?.name}"? Cette action est irréversible.
+                </p>
+              </div>
+              <div className="items-center flex gap-2 justify-center px-4 py-3">
+                <button
+                  className="px-4 py-2 rounded-md bg-red-500 text-white"
+                  onClick={handleDeleteProduct}
+                >
+                  Supprimer
+                </button>
+                <button
+                  id="cancel-btn"
+                  className="px-4 py-2 bg-gray-500 text-white text-base font-medium rounded-md w-24"
+                  onClick={() => setShowDeleteModal(false)}
+                >
+                  Anuuler
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

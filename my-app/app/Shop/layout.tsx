@@ -10,7 +10,7 @@ const Layout = ({
   return (
     <div className=" container flex relative w-full mt-12 justify-between ">
       <SideBarShopMenu />
-      <div className=" w-full flex items-center justify-center">
+      <div className=" w-full  flex items-center justify-center">
 
       <div>{children}</div>
       </div>

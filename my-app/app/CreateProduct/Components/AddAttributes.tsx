@@ -23,7 +23,7 @@ const AddAttribute= ({ attributes, setAttributes }: any) => {
   return (
     <div className="attributes mb-4 bg-white p-6 rounded-lg shadow-lg  w-full mx-auto">
       <div className="flex justify-between items-center">
-        <h3 className="text-lg font-semibold text-gray-700 mb-4">Attributs</h3>
+        <h3 className="text-lg font-bold mb-4">Attributs</h3>
         <button
           type="button"
           className="rounded-full w-8 h-8 hover:bg-blue-400 transition-all bg-blue-500 text-white  "
