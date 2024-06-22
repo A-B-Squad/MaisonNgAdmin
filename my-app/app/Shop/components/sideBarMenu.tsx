@@ -1,45 +1,76 @@
 "use client";
 import Link from "next/link";
-import React, { useState } from "react";
+import { usePathname } from "next/navigation";
+import React, { useState, useEffect } from "react";
 
 const SideBarShopMenu = () => {
-  const [activeIndex, setActiveIndex] = useState(0); // State to keep track of active menu item
+  const [activeIndex, setActiveIndex] = useState(0);
+  const path = usePathname();
 
+  // Define your menu items with titles and corresponding paths
   const menuValue = [
     {
-      title: "Carousel Ads",
-      link: "/Shop/CarouselAdvertising", // Add the actual link here
+      title: "Publicités en Carrousel",
+      link: "/Shop/CarouselAdvertising",
     },
     {
-      title: "Home Banner",
-      link: "/Shop/BannerAdvertising", // Add the actual link here
+      title: "À côté du Carrousel",
+      link: "/Shop/NextToCarouselAdvertising",
     },
     {
-      title: "Side Ads",
-      link: "/Shop/SideAdvertising", // Add the actual link here
+      title: "Bannière Accueil",
+      link: "/Shop/BannerAdvertising",
     },
     {
-      title: "Company information",
-      link: "#", // Add the actual link here
+      title: "Grande Publicité",
+      link: "/Shop/BigAdvertising",
+    },
+    {
+      title: "Publicités Latérales",
+      link: "/Shop/SideAdvertising",
+    },
+    {
+      title: "Informations sur l'Entreprise",
+      link: "/Shop/CompanyInfo",
     },
   ];
 
-  const handleClick = (index: React.SetStateAction<number>) => {
-    setActiveIndex(index); // Update the active index when a menu item is clicked
+  // Function to determine the active index based on the current path
+  const determineActiveIndex = () => {
+    const index = menuValue.findIndex((item) => path.startsWith(item.link));
+    return index !== -1 ? index : 0; // Default to first item if no match found
+  };
+
+  // Set active index on component mount and when path changes
+  useEffect(() => {
+    setActiveIndex(determineActiveIndex());
+  }, [path]);
+
+  const handleClick = (index: number) => {
+    setActiveIndex(index);
   };
 
   return (
-    <div className="h-96 w-56 min-w-56 shadow-lg sticky top-0 left-0">
-      <ul className="bg-gray-200 w-full h-full  rounded-md p-3 divide-y divide-gray-300">
+    <div className="h-96 w-56 min-w-56 shadow-lg sticky top-36 left-60">
+      <ul className="bg-slate-100 w-full h-full rounded-md p-3 divide-y divide-gray-300">
         {menuValue.map((data, index) => (
-          <li key={index} className="py-1" onClick={() => handleClick(index)}>
-            <Link
-              className={`py-2 cursor-pointer w-full flex h-full transition-all ${
-                index === activeIndex ? "font-semibold " : "hover:font-semibold"
-              }`}
-              href={data.link}
-            >
-              {data.title}
+          <li
+            key={index}
+            className={`py-1 relative ${
+              index === activeIndex ? "before:w-full" : "before:w-0"
+            } before:bg-mainColorAdminDash before:h-[1px] before:transition-all before:bottom-0 before:w-0 before:absolute before:left-0 hover:before:w-full hover:before:h-[1px]`}
+            onClick={() => handleClick(index)}
+          >
+            <Link href={data.link}>
+              <p
+                className={`py-2 cursor-pointer w-full flex h-full transition-all ${
+                  index === activeIndex
+                    ? "font-semibold border-b "
+                    : "hover:font-semibold hover:border-b "
+                }`}
+              >
+                {data.title}
+              </p>
             </Link>
           </li>
         ))}

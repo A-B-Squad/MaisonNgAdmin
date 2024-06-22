@@ -19,8 +19,6 @@ const config = {
     },
     extend: {
       colors: {
-
-
         mainColorAdminDash: "#202939",
         lightBeige: "#F0EDD4",
         mediumBeige: "#ECCDB4",

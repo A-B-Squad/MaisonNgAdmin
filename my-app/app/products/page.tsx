@@ -1,38 +1,62 @@
 "use client";
 import React, { useCallback, useEffect, useState } from "react";
 import Stats from "../components/stats";
-import SearchBar from "../components/searchBar";
 import { FiEdit2 } from "react-icons/fi";
 import { BiShow } from "react-icons/bi";
 import { MdDeleteOutline } from "react-icons/md";
 import { SEARCH_PRODUCTS_QUERY } from "../graph/queries";
-import { useLazyQuery, useQuery } from "@apollo/client";
+import { useLazyQuery, useMutation } from "@apollo/client";
 
 import moment from "moment";
-import { useSearchParams } from "next/navigation";
+import Image from "next/image";
+import prepRoute from "../Helpers/_prepRoute";
+import Link from "next/link";
+import { DELETE_PRODUCT_MUTATIONS } from "../graph/mutations";
+import SearchBar from "../components/SearchBar";
+import SmallSpinner from "../components/SmallSpinner";
 
-const Products = () => {
+const Products = ({ searchParams }: any) => {
+  const query = searchParams?.q;
+  const order = searchParams?.order;
 
-    const searchParams = useSearchParams();
-
-  const query = searchParams?.get("q")
-  const order = searchParams?.get("order")
-
-console.log('====================================');
-console.log("query: ",query," order: ",order);
-console.log('====================================');
   const [products, setProducts] = useState<any>([]);
-  const pageSize = 5;
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+
+  const [productToDelete, setProductToDelete] = useState<{
+    id: string;
+    name: string;
+  } | null>(null);
+  const pageSize = 10;
   const [page, setPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const [loading, setLoading] = useState(false);
   const numberOfPages = Math.ceil(totalCount / pageSize);
+
+  // Define the deleteProduct mutation once
+  const [deleteProductMutation] = useMutation(DELETE_PRODUCT_MUTATIONS);
 
   const formatDate = (timestamp: any) => {
     return moment(parseInt(timestamp, 10)).format("DD/MM/YYYY");
   };
 
   const [searchProducts] = useLazyQuery(SEARCH_PRODUCTS_QUERY);
+
+  const handleDeleteProduct = async () => {
+    if (!productToDelete) return;
+
+    try {
+      await deleteProductMutation({
+        variables: {
+          productId: productToDelete.id,
+        },
+      });
+      fetchProducts();
+      setProductToDelete(null);
+      setShowDeleteModal(false);
+    } catch (error) {
+      console.error("Error deleting product:", error);
+    }
+  };
 
   const fetchProducts = useCallback(async () => {
     setLoading(true);
@@ -63,7 +87,7 @@ console.log('====================================');
       setLoading(false);
       console.error("Error fetching products:", error);
     }
-  }, [page, pageSize,query,order]);
+  }, [page, pageSize, query, order]);
 
   useEffect(() => {
     fetchProducts();
@@ -129,25 +153,31 @@ console.log('====================================');
   };
 
   return (
-    <div className="w-full p-8">
-      <Stats />
-      <div className="w-full mt-10 border shadow-md rounded-sm">
+    <div className="w-full ">
+      <div className="container w-full  border shadow-md rounded-sm">
         <h1 className="font-bold text-2xl py-5 px-4 border-b-2 w-full">
           Produits{" "}
+          <span className="text-gray-600 font-medium text-base">
+            ({products.length || 0})
+          </span>
         </h1>
         <div className="mt-5 ">
-          <SearchBar />
+          <SearchBar page="products" />
           {loading ? (
-            <div>loading</div>
+            <div className="flex justify-center py-10">
+              <SmallSpinner />
+            </div>
           ) : (
             <section className="container mx-auto py-6 px-3 font-mono relative">
               <div className="w-full mb-8 overflow-hidden rounded-lg shadow-lg">
                 <div className="w-full overflow-x-auto">
                   <table className="w-full">
                     <thead>
-                      <tr className="text-md font-semibold tracking-wide text-left text-gray-900 bg-gray-100 uppercase border-b border-gray-600">
+                      <tr className="text-md font-semibold tracking-wide text-center text-gray-900 bg-gray-100 uppercase border-b border-gray-600">
                         <th className="px-4 py-3">Nom</th>
                         <th className="px-4 py-3">Prix</th>
+                        <th className="px-4 py-3">Promotion</th>
+                        <th className="px-4 py-3">Promo Fini</th>
                         <th className="px-4 py-3">Visibilité</th>
                         <th className="px-4 py-3">Date de création</th>
                         <th className="px-4 py-3">Commandes</th>
@@ -157,12 +187,16 @@ console.log('====================================');
                     <tbody className="bg-white">
                       {products?.map((product: any) => (
                         <tr className="text-gray-700" key={product.id}>
-                          <td className="px-4 py-3 border">
+                          <td className="Image px-4 py-3 border">
                             <div className="flex items-center text-sm">
-                              <div className="relative w-8 h-8 mr-3 rounded-full md:block">
-                                <img
+                              <div className="relative w-12 h-12 mr-3 rounded-full md:block">
+                                <Image
                                   className="object-cover w-full h-full rounded-full"
-                                  src={product.images[0]}
+                                  src={
+                                    product.images[0] ||
+                                    "https://res.cloudinary.com/dc1cdbirz/image/upload/v1718970701/b23xankqdny3n1bgrvjz.png"
+                                  }
+                                  layout="fill"
                                   alt=""
                                   loading="lazy"
                                 />
@@ -178,12 +212,26 @@ console.log('====================================');
                               </div>
                             </div>
                           </td>
-                          <td className="px-4 py-3 text-ms font-semibold border">
+                          <td className="Price text-center px-4 py-3 text-ms font-semibold border">
                             {product.price.toFixed(3)}
                           </td>
-                          <td className="px-4 py-3 text-xs border">
+                          <td className="Discount px-4 text-center py-3 text-ms font-semibold border">
+                            {product?.productDiscounts.length > 0
+                              ? product.productDiscounts[0].newPrice.toFixed(
+                                  3
+                                ) + "TND"
+                              : "_________"}
+                          </td>
+                          <td className="Discount px-4 text-center py-3 text-ms font-semibold border">
+                            {product?.productDiscounts.length > 0
+                              ? formatDate(
+                                  product.productDiscounts[0]?.dateOfEnd
+                                )
+                              : "_________"}
+                          </td>
+                          <td className="visibility text-center px-4 py-3 text-sm border">
                             <span
-                              className={`px-2 py-1 font-semibold leading-tight ${
+                              className={`px-2 py-1  font-semibold leading-tight ${
                                 !product.visibility
                                   ? "text-green-700 bg-green-100"
                                   : "text-red-700 bg-red-100"
@@ -192,21 +240,66 @@ console.log('====================================');
                               {!product.visibility ? "Visible" : "Non visible"}
                             </span>
                           </td>
-                          <td className="px-4 py-3 text-sm border">
+                          <td className="createdAt text-center px-4 py-3 text-sm border">
                             {formatDate(product.createdAt)}
                           </td>
-                          <td className="px-4 py-3 text-sm border">
+                          <td className="Inventory text-center px-4 py-3 text-sm border">
                             {product.solde}
                           </td>
-                          <td className="px-4 py-3 text-sm border">
+                          <td className="Edits px-4 py-3 text-sm border">
                             <div className="flex justify-center items-center gap-2">
-                              <button className="p-2 w-10 h-10 rounded-full border-2">
+                              <Link
+                                target="_blank"
+                                href={{
+                                  pathname: "/UpdateProduct",
+                                  query: {
+                                    productId: product.id,
+                                  },
+                                }}
+                                className="p-2 w-10 h-10 rounded-full border-2"
+                              >
                                 <FiEdit2 size={20} />
-                              </button>
-                              <button className="p-2 w-10 h-10 rounded-full border-2">
+                              </Link>
+
+                              <Link
+                                target="_blank"
+                                href={{
+                                  pathname: `http://localhost:3000/products/tunisie/${prepRoute(
+                                    product.name
+                                  )}`,
+                                  query: {
+                                    productId: product?.id,
+                                    collection: [
+                                      product?.categories[0]?.name,
+                                      product?.categories[0]?.id,
+                                      product?.categories[0]?.subcategories[0]
+                                        ?.name,
+                                      product?.categories[1]?.subcategories[0]
+                                        ?.id,
+                                      product?.categories[0]?.subcategories[0]
+                                        ?.subcategories[1]?.name,
+                                      product?.categories[0]?.subcategories[0]
+                                        ?.subcategories[1]?.id,
+                                      product?.name,
+                                    ],
+                                  },
+                                }}
+                                className="p-2 w-10 h-10 rounded-full border-2"
+                              >
                                 <BiShow size={22} />
-                              </button>
-                              <button className="p-2 w-10 h-10 rounded-full border-2">
+                              </Link>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setProductToDelete({
+                                    id: product.id,
+                                    name: product.name,
+                                  });
+
+                                  setShowDeleteModal(true);
+                                }}
+                                className="p-2 w-10 h-10 rounded-full border-2"
+                              >
                                 <MdDeleteOutline size={20} />
                               </button>
                             </div>
@@ -217,7 +310,7 @@ console.log('====================================');
                   </table>
                 </div>
               </div>
-              <div className="flex justify-between">
+              <div className="pagination flex justify-between">
                 {products.length > 0 && (
                   <div className="Page pagination justify-self-start h-32">
                     <ul className="inline-flex -space-x-px text-sm">
@@ -249,14 +342,53 @@ console.log('====================================');
                     </ul>
                   </div>
                 )}
-                <button className="text-white h-12 p-3 rounded-md bg-mainColorAdminDash">
+                <Link
+                  href={"/CreateProduct"}
+                  className="text-white h-12 p-3 rounded-md bg-mainColorAdminDash"
+                >
                   Ajouter un produit +
-                </button>
+                </Link>
               </div>
             </section>
           )}
         </div>
       </div>
+      {/* Delete Modal */}
+      {showDeleteModal && (
+        <div
+          className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full"
+          id="my-modal"
+        >
+          <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+            <div className="mt-3 text-center">
+              <h3 className="text-lg leading-6 font-medium text-gray-900">
+                Delete Product
+              </h3>
+              <div className="mt-2 px-7 py-3">
+                <p className="text-sm text-gray-500">
+                  Voulez-vous vraiment supprimer ce produit ?"
+                  {productToDelete?.name}"? Cette action est irréversible.
+                </p>
+              </div>
+              <div className="items-center flex gap-2 justify-center px-4 py-3">
+                <button
+                  className="px-4 py-2 rounded-md bg-red-500 text-white"
+                  onClick={handleDeleteProduct}
+                >
+                  Supprimer
+                </button>
+                <button
+                  id="cancel-btn"
+                  className="px-4 py-2 bg-gray-500 text-white text-base font-medium rounded-md w-24"
+                  onClick={() => setShowDeleteModal(false)}
+                >
+                  Anuuler
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

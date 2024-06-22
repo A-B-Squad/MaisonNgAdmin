@@ -34,8 +34,7 @@ export default function RootLayout({
             <div className="w-full h-full flex flex-col relative ">
               <main className=" flex justify-center items-center w-full">
                 <ApolloWrapper>{children}</ApolloWrapper>
-<Toaster />
-
+                <Toaster />
               </main>
             </div>
           </div>
