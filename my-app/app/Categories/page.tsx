@@ -9,9 +9,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { DELETE_CATEGORIES_MUTATIONS } from "../graph/mutations";
 import SearchBar from "../components/SearchBar";
-import SmallSpinner from "../components/SmallSpinner";
+import Loading from "./loading";
 import { CiSquareMinus, CiSquarePlus } from "react-icons/ci";
 import AddCategories from "./AddCategoriesButton";
+import prepRoute from "../Helpers/_prepRoute";
 
 const Categories = ({ searchParams }: any) => {
   const [categories, setCategories] = useState([]);
@@ -131,7 +132,7 @@ const Categories = ({ searchParams }: any) => {
             <div className="flex justify-center items-center gap-2">
               <Link
                 href={`/UpdateCategory?categoryId=${category.id}`}
-                className="p-2 w-10 h-10 rounded-full border-2"
+                className="p-2 w-10 h-10 hover:opacity-40 transition-opacity shadow-md rounded-full border-2"
               >
                 <FiEdit2 size={20} />
               </Link>
@@ -141,13 +142,19 @@ const Categories = ({ searchParams }: any) => {
                   setCategoryToDelete({ id: category.id, name: category.name });
                   setShowDeleteModal(true);
                 }}
-                className="p-2 w-10 h-10 rounded-full border-2"
+                className="p-2 w-10 h-10 hover:opacity-40 transition-opacity shadow-md rounded-full border-2"
               >
                 <MdDeleteOutline size={20} />
               </button>
-              <button className="p-2 w-10 h-10 rounded-full border-2">
+              <Link
+                target="_blank"
+                href={`http://localhost:3000/Collections/tunisie/${prepRoute(
+                  category.name
+                )}/?category=${category.id}`}
+                className="p-2 hover:opacity-40 transition-opacity shadow-md w-10 h-10 rounded-full border-2"
+              >
                 <BiShow size={20} />
-              </button>
+              </Link>
             </div>
           </td>
         </tr>
@@ -162,7 +169,7 @@ const Categories = ({ searchParams }: any) => {
   if (loading)
     return (
       <div className="flex justify-center py-10">
-        <SmallSpinner />
+        <Loading />
       </div>
     );
   if (error) return <p>Error loading categories</p>;
@@ -180,9 +187,8 @@ const Categories = ({ searchParams }: any) => {
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="text-md font-semibold text-gray-900 bg-gray-100 border-b border-gray-600">
+              <tr className="text-sm font-semibold text-gray-900 bg-gray-100 border-b border-gray-600">
                 <th className="px-4 py-3 text-left">Nom</th>
-
                 <th className="px-4 py-3">Actions</th>
               </tr>
             </thead>

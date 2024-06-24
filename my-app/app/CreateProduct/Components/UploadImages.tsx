@@ -5,7 +5,7 @@ import { CldUploadWidget } from "next-cloudinary";
 import Image from "next/image";
 import { IoMdAlert } from "react-icons/io";
 import { StaticImport } from "next/dist/shared/lib/get-img-props";
-import { FaTrashAlt } from "react-icons/fa"; 
+import { FaTrashAlt } from "react-icons/fa";
 
 const UploadImage = ({ uploadedImages, setUploadedImages }: any) => {
   const handleSuccessUpload = (result: any) => {
@@ -17,7 +17,7 @@ const UploadImage = ({ uploadedImages, setUploadedImages }: any) => {
 
   const handleDeleteImage = (index: number) => {
     setUploadedImages((prevImages: any) =>
-      prevImages.filter((_: any, i: number) => i !== index)
+      prevImages.filter((_: any, i: number) => i !== index),
     );
   };
 

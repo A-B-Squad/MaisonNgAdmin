@@ -1,14 +1,12 @@
-"use client"
+"use client";
 import React from "react";
 import { CiSaveDown2 } from "react-icons/ci";
 import { MdOutlineDeleteOutline } from "react-icons/md";
 
-
 const BackUp = ({ onSave }: any) => {
-
-const onDelete=()=>{
-  window.location.reload()
-}
+  const onDelete = () => {
+    window.location.reload();
+  };
   return (
     <div className="bg-white shadow-md fixed left-0 bottom-0 w-full py-4 flex items-center gap-2 px-2 border justify-end">
       <button

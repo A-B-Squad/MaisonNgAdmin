@@ -7,15 +7,13 @@ import {
   NextSSRInMemoryCache,
   SSRMultipartLink,
 } from "@apollo/experimental-nextjs-app-support/ssr";
-import { redirect, usePathname } from "next/navigation";
 
 function makeClient() {
-  if (usePathname()?.split("").length === 1) {
-    redirect("/dashboard");
-  }
+
   const httpLink = new HttpLink({
     uri: `${process.env.NEXT_PUBLIC_API_URL}`,
     credentials:'include',
+    
   });
 
   return new NextSSRApolloClient({

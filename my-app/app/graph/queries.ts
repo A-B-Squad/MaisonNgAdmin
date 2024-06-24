@@ -15,14 +15,26 @@ export const GET_PACKAGES_QUERY = gql`
   }
 `;
 export const GET_ALL_USERS_QUERY = gql`
-query FetchAllUsers {
-  fetchAllUsers {
-  id  
+  query FetchAllUsers {
+    fetchAllUsers {
+      id
+    }
   }
-}`;
+`;
+export const CATEGORY_BY_ID_QUERY = gql`
+  query CategoryById($categoryId: String!) {
+    categoryById(categoryId: $categoryId) {
+      name
+      bigImage
+      smallImage
+      description
+      parentId
+    }
+  }
+`;
 
 export const CATEGORY_QUERY = gql`
- query Categories {
+  query Categories {
     categories {
       id
       name
@@ -116,12 +128,12 @@ export const COLORS_QUERY = gql`
   }
 `;
 export const DISCOUNT_PERCENTAGE_QUERY = gql`
-query DiscountsPercentage {
-  DiscountsPercentage {
-    id
-    percentage
+  query DiscountsPercentage {
+    DiscountsPercentage {
+      id
+      percentage
+    }
   }
-}
 `;
 export const ADVERTISSMENT_QUERY = gql`
   query AdvertismentByPosition($position: String!) {
@@ -132,74 +144,73 @@ export const ADVERTISSMENT_QUERY = gql`
   }
 `;
 export const PRODUCT_QUERY = gql`
- query Products {
-  products {
-  id  
+  query Products {
+    products {
+      id
+    }
   }
-}
 `;
 export const COMPANY_INFO_QUERY = gql`
- query CompanyInfo {
-  companyInfo {
-    phone
-    deliveringPrice
-    logo
-    instagram
-    facebook
-    location
-    email
+  query CompanyInfo {
+    companyInfo {
+      phone
+      deliveringPrice
+      logo
+      instagram
+      facebook
+      location
+      email
+    }
   }
-}
 `;
 
 export const PRODUCT_BY_ID_QUERY = gql`
- query ProductById($productByIdId: ID!) {
-  productById(id: $productByIdId) {
-    id
-    name
-    price
-    isVisible
-    reference
-    description
-    inventory
-    solde
-    images
-    createdAt
-    categories {
+  query ProductById($productByIdId: ID!) {
+    productById(id: $productByIdId) {
       id
       name
-      subcategories {
+      price
+      isVisible
+      reference
+      description
+      inventory
+      solde
+      images
+      createdAt
+      categories {
         id
         name
         subcategories {
           id
           name
+          subcategories {
+            id
+            name
+          }
         }
       }
-    }
-    productDiscounts {
-      id
-      price
-      newPrice
-      dateOfEnd
-      dateOfStart
-    }
-    Colors {
-      id
-      color
-      Hex
-    }
-    Brand {
-      id
-      name
-      logo
-    }
-    attributes {
-      id
-      name
-      value
+      productDiscounts {
+        id
+        price
+        newPrice
+        dateOfEnd
+        dateOfStart
+      }
+      Colors {
+        id
+        color
+        Hex
+      }
+      Brand {
+        id
+        name
+        logo
+      }
+      attributes {
+        id
+        name
+        value
+      }
     }
   }
-}
-
 `;

@@ -1,10 +1,14 @@
-"use client"
+"use client";
 import React from "react";
 import { useQuery } from "@apollo/client";
 import moment from "moment";
 import { LuPackage2, LuUsers2 } from "react-icons/lu";
 import { TbPackages } from "react-icons/tb";
-import { GET_ALL_USERS_QUERY, GET_PACKAGES_QUERY, PRODUCT_QUERY } from "../graph/queries";
+import {
+  GET_ALL_USERS_QUERY,
+  GET_PACKAGES_QUERY,
+  PRODUCT_QUERY,
+} from "../graph/queries";
 import SmallSpinner from "./SmallSpinner";
 
 const DEFAULT_TIMEZONE = "Africa/Tunis";
@@ -31,16 +35,19 @@ interface ProductData {
 }
 
 const Stats = () => {
-  const { loading: usersLoading, data: usersLength } = useQuery(GET_ALL_USERS_QUERY);
-  const { loading: productsLoading, data: productLength } = useQuery(PRODUCT_QUERY);
-  const { loading: packagesLoading, data: packageData } = useQuery(GET_PACKAGES_QUERY);
+  const { loading: usersLoading, data: usersLength } =
+    useQuery(GET_ALL_USERS_QUERY);
+  const { loading: productsLoading, data: productLength } =
+    useQuery(PRODUCT_QUERY);
+  const { loading: packagesLoading, data: packageData } =
+    useQuery(GET_PACKAGES_QUERY);
 
   const getPackagesThisMonth = (packages: Package[]) => {
     const startOfMonth = moment().startOf("month");
     return packages.filter((pkg) =>
       moment
         .tz(parseInt(pkg?.createdAt), DEFAULT_TIMEZONE)
-        .isSameOrAfter(startOfMonth)
+        .isSameOrAfter(startOfMonth),
     );
   };
 
@@ -56,7 +63,7 @@ const Stats = () => {
           <LuPackage2 className="card_icon" />
         </div>
         <h1 className="text-blue-900">
-          {productsLoading ? <SmallSpinner/> : productLength?.products?.length}
+          {productsLoading ? <SmallSpinner /> : productLength?.products?.length}
         </h1>
       </div>
       <div className="card flex flex-col justify-around p-4 px-6 rounded bg-white border shadow-md">
@@ -65,7 +72,7 @@ const Stats = () => {
           <TbPackages className="card_icon" />
         </div>
         <h1 className="text-blue-900">
-          {packagesLoading ? <SmallSpinner/> : packagesThisMonth.length}
+          {packagesLoading ? <SmallSpinner /> : packagesThisMonth.length}
         </h1>
       </div>
       <div className="card flex flex-col justify-around p-4 px-6 rounded bg-white border shadow-md">
@@ -74,7 +81,7 @@ const Stats = () => {
           <LuUsers2 className="card_icon" />
         </div>
         <h1 className="text-blue-900">
-          {usersLoading ? <SmallSpinner/> : usersLength?.fetchAllUsers?.length}
+          {usersLoading ? <SmallSpinner /> : usersLength?.fetchAllUsers?.length}
         </h1>
       </div>
       {/* <div className="card flex flex-col justify-around p-4 px-6 rounded bg-white border shadow-md">

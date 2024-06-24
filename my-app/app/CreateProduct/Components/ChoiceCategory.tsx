@@ -84,14 +84,14 @@ const ChoiceCategory = ({ selectedIds, setSelectedIds }: any) => {
 
   const getSubcategories = useMemo(() => {
     const selectedCategoryObj = categories.find(
-      (cat) => cat.id === selectedIds.categoryId
+      (cat) => cat.id === selectedIds.categoryId,
     );
     return selectedCategoryObj ? selectedCategoryObj.subcategories : [];
   }, [categories, selectedIds.categoryId]);
 
   const getSubSubcategories = useMemo(() => {
     const selectedSubcategoryObj = getSubcategories.find(
-      (subcat) => subcat.id === selectedIds.subcategoryId
+      (subcat) => subcat.id === selectedIds.subcategoryId,
     );
     return selectedSubcategoryObj
       ? selectedSubcategoryObj.subSubcategories

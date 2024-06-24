@@ -5,7 +5,7 @@ import { IoSearch } from "react-icons/io5";
 import { useRouter } from "next/navigation";
 
 interface SearchBarProps {
-  page: "Categories" | "products";
+  page: "Categories" | "Products" | "Inventory";
 }
 
 const SearchBar: React.FC<SearchBarProps> = ({ page }) => {
@@ -37,7 +37,6 @@ const SearchBar: React.FC<SearchBarProps> = ({ page }) => {
       ? "Rechercher une catégorie"
       : "Trouver un produit";
   };
-
 
   return (
     <form
