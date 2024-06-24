@@ -33,11 +33,11 @@ const CreateProduct = () => {
   const [manualDiscountPrice, setManualDiscountPrice] = useState<number>(0);
   const [originalPrice, setOriginalPrice] = useState<number>(0);
   const [dateOfStartDiscount, setDateOfStartDiscount] = useState<Date | null>(
-    null
+    null,
   );
   const [dateOfEndDiscount, setDateOfEndDiscount] = useState<Date | null>(null);
   const [selectedDiscountId, setSelectedDicountId] = useState<string | null>(
-    null
+    null,
   );
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const [visibility, setVisibility] = useState<boolean>(true);
@@ -65,23 +65,26 @@ const CreateProduct = () => {
       });
       return;
     }
-  
+
     const discount = {
       dateOfEnd: dateOfEndDiscount,
       dateOfStart: dateOfStartDiscount,
       discountId: selectedDiscountId,
       newPrice: manualDiscountPrice,
     };
-  
+
     const hasDiscount =
-      discount.dateOfStart && discount.dateOfEnd && (manualDiscountPrice || discountPercentage);
-  
+      discount.dateOfStart &&
+      discount.dateOfEnd &&
+      (manualDiscountPrice || discountPercentage);
+
     if (hasDiscount) {
       if (!discount.dateOfStart || !discount.dateOfEnd) {
         toast({
           title: "Erreur de création",
           className: "text-white bg-red-600 border-0",
-          description: "Veuillez remplir les dates de début et de fin de remise.",
+          description:
+            "Veuillez remplir les dates de début et de fin de remise.",
           duration: 5000,
         });
         return;
@@ -96,7 +99,7 @@ const CreateProduct = () => {
         return;
       }
     }
-  
+
     if (!originalPrice && !hasDiscount) {
       toast({
         title: "Erreur de création",
@@ -106,11 +109,11 @@ const CreateProduct = () => {
       });
       return;
     }
-  
+
     const productData = {
       input: {
         attributeInputs: attributes.filter(
-          (attr) => attr.name.trim() !== "" && attr.value.trim() !== ""
+          (attr) => attr.name.trim() !== "" && attr.value.trim() !== "",
         ),
         brandId: brand,
         categories: [
@@ -129,7 +132,7 @@ const CreateProduct = () => {
         ...(hasDiscount && { discount: [discount] }),
       },
     };
-  
+
     createProductMutation({
       variables: productData,
       onCompleted() {
@@ -154,7 +157,7 @@ const CreateProduct = () => {
           subSubcategoryId: "",
         });
         setBrand("");
-  
+
         toast({
           title: "Produit créé",
           className: "text-white bg-mainColorAdminDash border-0",
@@ -164,7 +167,6 @@ const CreateProduct = () => {
       },
     });
   };
-  
 
   return (
     <div className="container mx-auto py-10 bg-slate-100 w-full">

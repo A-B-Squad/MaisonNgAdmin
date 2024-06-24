@@ -52,7 +52,6 @@ const UploadNextToCarouselAds = ({
         <p className="text-gray-400">230PX / 390PX</p>
       </div>
 
-
       <div className="w-full mb-4 flex justify-center">
         {localLargeImage ? (
           <div className="w-[20rem] h-64 relative  border-2">

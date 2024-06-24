@@ -29,7 +29,7 @@ const AddPrice = ({
   setSelectedDicountId,
 }: any) => {
   const [discountType, setDiscountType] = useState<"percentage" | "manual">(
-    "percentage"
+    "percentage",
   );
   const [discountedPrice, setDiscountedPrice] = useState<string>("0.00");
   const { data, loading, error } = useQuery(DISCOUNT_PERCENTAGE_QUERY);
@@ -47,9 +47,11 @@ const AddPrice = ({
   const handleDiscountPercentageChange = (value: string) => {
     const percentage = parseInt(value) || 0;
     setDiscountPercentage(percentage);
-    
+
     // Find the corresponding discount option and get its ID
-    const selectedOption = discountOptions.find((option: { percentage: number; }) => option.percentage === percentage);
+    const selectedOption = discountOptions.find(
+      (option: { percentage: number }) => option.percentage === percentage,
+    );
     if (selectedOption) {
       setSelectedDicountId(selectedOption.id);
     } else {
@@ -59,11 +61,11 @@ const AddPrice = ({
   };
 
   const handleManualDiscountPriceChange = (
-    e: ChangeEvent<HTMLInputElement>
+    e: ChangeEvent<HTMLInputElement>,
   ) => {
     const discountPrice = parseFloat(e.target.value) || 0;
     setManualDiscountPrice(discountPrice);
-    setSelectedDicountId(""); 
+    setSelectedDicountId("");
     calculateManualDiscountedPrice(originalPrice, discountPrice);
   };
 
@@ -80,17 +82,17 @@ const AddPrice = ({
   const calculateDiscountedPrice = (price: number, percentage: number) => {
     const discount = (price * percentage) / 100;
     const finalPrice = price - discount;
-    setManualDiscountPrice(finalPrice)
+    setManualDiscountPrice(finalPrice);
 
     setDiscountedPrice(finalPrice.toFixed(2));
   };
 
   const calculateManualDiscountedPrice = (
     price: number,
-    discountPrice: number
+    discountPrice: number,
   ) => {
     const finalPrice = price - discountPrice;
-    setManualDiscountPrice(finalPrice)
+    setManualDiscountPrice(finalPrice);
     setDiscountedPrice(finalPrice.toFixed(2));
   };
 

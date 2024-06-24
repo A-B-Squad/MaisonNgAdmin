@@ -26,7 +26,12 @@ const UpdateColors = ({ selectedColor, setSelectedColor }: any) => {
     setSelectedColor(value);
   };
 
-  if (loading) return <div className=" h-52 relative border bg-[#ffffffc2] rounded-md flex items-center justify-center w-full"><Load/></div>;
+  if (loading)
+    return (
+      <div className=" h-52 relative border bg-[#ffffffc2] rounded-md flex items-center justify-center w-full">
+        <Load />
+      </div>
+    );
   if (error) return <p>Erreur : {error.message}</p>;
 
   return (
@@ -60,8 +65,6 @@ const UpdateColors = ({ selectedColor, setSelectedColor }: any) => {
           </SelectContent>
         </Select>
       </div>
-
-   
     </div>
   );
 };

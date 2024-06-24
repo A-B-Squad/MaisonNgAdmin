@@ -4,7 +4,7 @@ const UpdateReference = ({ reference, setReference }: any) => {
   return (
     <div className="stock bg-white rounded-md shadow-md p-3">
       <label className="block border-b py-2 w-full text-gray-700 font-semibold tracking-wider">
-      Référence
+        Référence
       </label>
       <input
         type="string"

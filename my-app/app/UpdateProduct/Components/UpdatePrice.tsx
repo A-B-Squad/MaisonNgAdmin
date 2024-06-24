@@ -46,23 +46,23 @@ const UpdatePrice = ({
   const handleDiscountPercentageChange = (value: string) => {
     const percentage = parseInt(value) || 0;
     setDiscountPercentage(percentage);
-  
+
     // Find the corresponding discount option and get its ID
     const selectedOption = discountOptions.find(
-      (option: { percentage: number }) => option.percentage === percentage
+      (option: { percentage: number }) => option.percentage === percentage,
     );
-    
+
     if (selectedOption) {
       setSelectedDicountId(selectedOption.id);
     } else {
       setSelectedDicountId(null);
     }
-  
+
     calculateDiscountedPrice(originalPrice, percentage);
   };
 
   const handleManualDiscountPriceChange = (
-    e: ChangeEvent<HTMLInputElement>
+    e: ChangeEvent<HTMLInputElement>,
   ) => {
     const discountPrice = Number(e.target.value) || 0;
 
@@ -70,7 +70,6 @@ const UpdatePrice = ({
     setSelectedDicountId("");
     calculateManualDiscountedPrice(originalPrice, discountPrice);
   };
-
 
   const handleDiscountTypeChange = (value: string) => {
     const type = value as "percentage" | "manual";
@@ -85,15 +84,15 @@ const UpdatePrice = ({
   const calculateDiscountedPrice = (price: number, percentage: number) => {
     const discount = (price * percentage) / 100;
     const finalPrice = price - discount;
-   
+
     setManualDiscountPrice(finalPrice);
-    
+
     setDiscountedPrice(finalPrice.toFixed(2));
   };
 
   const calculateManualDiscountedPrice = (
     price: number,
-    discountPrice: number
+    discountPrice: number,
   ) => {
     const finalPrice = price - discountPrice;
     setManualDiscountPrice(finalPrice);

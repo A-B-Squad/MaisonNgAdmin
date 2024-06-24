@@ -14,7 +14,7 @@ if (process.env.NODE_ENV !== "production") {
 }
 
 const openSans = Open_Sans({
-  subsets: ["latin"],
+  subsets: ["cyrillic"],
 });
 export default function RootLayout({
   children,

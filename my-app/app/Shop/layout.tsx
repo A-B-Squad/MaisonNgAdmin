@@ -11,8 +11,7 @@ const Layout = ({
     <div className=" container flex relative w-full mt-12 justify-between ">
       <SideBarShopMenu />
       <div className=" w-full  flex items-center justify-center">
-
-      <div>{children}</div>
+        <div>{children}</div>
       </div>
     </div>
   );

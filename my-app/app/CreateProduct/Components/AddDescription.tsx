@@ -41,7 +41,7 @@ const AddDescription = ({ description, setDescription }: any) => {
       buttons:
         "bold,italic,underline,strikethrough,eraser,ul,ol,font,fontsize,paragraph,lineHeight,superscript,subscript,spellcheck,cut,copy,paste,selectall,copyformat",
     }),
-    []
+    [],
   );
 
   return (

@@ -5,11 +5,11 @@ interface Attribute {
   value: string;
 }
 
-const UpdateAttribute= ({ attributes, setAttributes }: any) => {
+const UpdateAttribute = ({ attributes, setAttributes }: any) => {
   const handleAttributeChange = (
     index: number,
     field: string,
-    value: string
+    value: string,
   ) => {
     const newAttributes = [...attributes];
     newAttributes[index][field as keyof Attribute] = value;

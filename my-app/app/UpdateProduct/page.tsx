@@ -27,7 +27,7 @@ const UpdateProduct = ({ searchParams }: any) => {
     { name: "", value: "" },
   ]);
   const [discountType, setDiscountType] = useState<"percentage" | "manual">(
-    "percentage"
+    "percentage",
   );
   const [uploadedImages, setUploadedImages] = useState<string[]>([]);
   const [title, setTitle] = useState<string>("");
@@ -38,11 +38,11 @@ const UpdateProduct = ({ searchParams }: any) => {
   const [manualDiscountPrice, setManualDiscountPrice] = useState<number>(0);
   const [originalPrice, setOriginalPrice] = useState<number>(0);
   const [dateOfStartDiscount, setDateOfStartDiscount] = useState<Date | null>(
-    null
+    null,
   );
   const [dateOfEndDiscount, setDateOfEndDiscount] = useState<Date | null>(null);
   const [selectedDiscountId, setSelectedDicountId] = useState<string | null>(
-    null
+    null,
   );
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const [visibility, setVisibility] = useState<boolean>(true);
@@ -80,7 +80,7 @@ const UpdateProduct = ({ searchParams }: any) => {
         product.attributes.map((attr: { name: any; value: any }) => ({
           name: attr.name,
           value: attr.value,
-        }))
+        })),
       );
 
       if (product.categories.length > 0) {
@@ -137,7 +137,7 @@ const UpdateProduct = ({ searchParams }: any) => {
     };
 
     const hasDiscount = manualDiscountPrice || selectedDiscountId;
-console.log(discount);
+    console.log(discount);
 
     if (!!hasDiscount) {
       console.log(hasDiscount);
@@ -185,7 +185,7 @@ console.log(discount);
       productId: productId,
       input: {
         attributeInputs: attributes.filter(
-          (attr) => attr.name.trim() !== "" && attr.value.trim() !== ""
+          (attr) => attr.name.trim() !== "" && attr.value.trim() !== "",
         ),
         brandId: brand,
         categories: [
