@@ -1,18 +1,18 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { FiEdit2, FiChevronDown, FiChevronRight } from "react-icons/fi";
+import { FiEdit2, } from "react-icons/fi";
 import { BiShow } from "react-icons/bi";
 import { MdDeleteOutline } from "react-icons/md";
-import { CATEGORY_QUERY } from "../graph/queries";
+import { CATEGORY_QUERY } from "../../graph/queries";
 import { useMutation, useQuery } from "@apollo/client";
 import Image from "next/image";
 import Link from "next/link";
-import { DELETE_CATEGORIES_MUTATIONS } from "../graph/mutations";
-import SearchBar from "../components/SearchBar";
+import { DELETE_CATEGORIES_MUTATIONS } from "../../graph/mutations";
+import SearchBar from "../../components/SearchBar";
 import Loading from "./loading";
 import { CiSquareMinus, CiSquarePlus } from "react-icons/ci";
 import AddCategories from "./AddCategoriesButton";
-import prepRoute from "../Helpers/_prepRoute";
+import prepRoute from "../../Helpers/_prepRoute";
 
 const Categories = ({ searchParams }: any) => {
   const [categories, setCategories] = useState([]);
@@ -115,12 +115,13 @@ const Categories = ({ searchParams }: any) => {
               )}
               <div className="relative w-12 h-12 mr-3 rounded-full border">
                 <Image
-                  className="object-cover w-full h-full rounded-full"
+                  className=" w-full h-full rounded-full"
                   src={
                     category.smallImage ||
                     "https://res.cloudinary.com/dc1cdbirz/image/upload/v1718970701/b23xankqdny3n1bgrvjz.png"
                   }
                   layout="fill"
+                  objectFit="contain"
                   alt=""
                 />
               </div>
@@ -183,7 +184,7 @@ const Categories = ({ searchParams }: any) => {
         </span>
       </h1>
       <div className="mt-5">
-        <SearchBar page="Categories" />
+        <SearchBar page="Products/Categories" />
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>

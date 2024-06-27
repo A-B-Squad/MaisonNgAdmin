@@ -1,5 +1,4 @@
 import React from "react";
-import "../globals.css";
 const loading = () => {
   return (
     <div className="loader  ">

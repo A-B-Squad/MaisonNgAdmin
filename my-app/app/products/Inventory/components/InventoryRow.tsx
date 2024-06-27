@@ -27,7 +27,9 @@ const InventoryRow: React.FC<InventoryRowProps> = ({
       <div className="flex items-center text-sm">
         <div className="relative w-12 h-12 mr-3 rounded-full md:block">
           <Image
-            className="object-cover w-full h-full rounded-full"
+            className=" w-full h-full rounded-full"
+            objectFit="contain"
+            
             src={
               product.images[0] ||
               "https://res.cloudinary.com/dc1cdbirz/image/upload/v1718970701/b23xankqdny3n1bgrvjz.png"

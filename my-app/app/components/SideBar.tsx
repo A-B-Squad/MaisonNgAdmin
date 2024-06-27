@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { IoMenu } from "react-icons/io5";
 import { CiHome, CiSettings } from "react-icons/ci";
 import { LuPackage2, LuUsers2, LuNewspaper } from "react-icons/lu";
@@ -8,22 +8,24 @@ import { MdKeyboardDoubleArrowUp } from "react-icons/md";
 import { FaRegChartBar } from "react-icons/fa";
 import { FcAdvertising } from "react-icons/fc";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 const SideBar = () => {
   const [isExpanded, setIsExpanded] = useState(true);
+  const [expandedMenu, setExpandedMenu] = useState<number | null>(null);
+  const [activeLink, setActiveLink] = useState<string>("");
+  const pathname = usePathname();
+
+  useEffect(() => {
+    setActiveLink(pathname);
+   }, [pathname]);
 
   const toggleSidebar = () => {
     setIsExpanded(!isExpanded);
   };
 
-  // State to manage expanded submenus
-  const [expandedMenu, setExpandedMenu] = useState(null);
   const handleSubMenuToggle = (index: number) => {
-    if (expandedMenu === index) {
-      setExpandedMenu(null);
-    } else {
-      setExpandedMenu(index);
-    }
+    setExpandedMenu((prev) => (prev === index ? null : index));
   };
 
   // Sidebar items with submenus
@@ -43,13 +45,13 @@ const SideBar = () => {
     {
       icon: <TbPackages size={24} />,
       text: "Produits",
-      href: "/products",
+      href: "/Products",
       subItems: [
         { text: "Tous les produits", href: "/Products" },
-        { text: "Nouveau produit", href: "/CreateProduct" },
-        { text: "Categoriés", href: "/Categories" },
-        { text: "Inventaire", href: "/Inventory" },
-        { text: "Commentaires", href: "/categories" },
+        { text: "Nouveau produit", href: "/Products/CreateProduct" },
+        { text: "Categoriés", href: "/Products/Categories" },
+        { text: "Inventaire", href: "/Products/Inventory" },
+        { text: "Commentaires", href: "/Products/Reviews" },
       ],
     },
     {
@@ -64,7 +66,7 @@ const SideBar = () => {
       href: "#",
       subItems: [
         { text: "Clients", href: "/clients" },
-        { text: "Categories", href: "/categories" },
+        // { text: "Categories", href: "/categories" },
       ],
     },
     {
@@ -95,18 +97,16 @@ const SideBar = () => {
 
   return (
     <div
-      className={`sideBar flex h-screen overflow-y-auto sticky top-0 left-0 z-50 bg-mainColorAdminDash  transition-all duration-300 ${
-        isExpanded ? "w-64" : " w-[5%]"
+      className={`sideBar flex h-screen overflow-y-auto sticky top-0 left-0 z-50 bg-mainColorAdminDash transition-all duration-300 ${
+        isExpanded ? "w-64" : "w-[5%]"
       }`}
     >
-      <div
-        className={` shadow md:h-full flex-col justify-between w-full transition-width duration-300`}
-      >
+      <div className="shadow md:h-full flex-col justify-between w-full transition-width duration-300">
         <div>
           <ul className="mt-4">
             <li className="flex w-full py-4 px-4 justify-between text-white cursor-pointer outline-none items-center transition">
               <button
-                className="flex items-center focus:outline-none focus:ring-2 outline-none focus:ring-white"
+                className="flex items-center focus:outline-none focus:ring-"
                 onClick={toggleSidebar}
               >
                 <IoMenu size={30} />
@@ -116,36 +116,71 @@ const SideBar = () => {
             {sidebarItems.map((item, index) => (
               <React.Fragment key={index}>
                 <li
-                  className={` ${
-                    expandedMenu === index ? "bg-[#ffffff3d]" : ""
-                  } flex w-full py-3 px-4 justify-between text-white  hover:text-blue-900 hover:bg-gray-100 cursor-pointer items-center transition`}
-                  onClick={() => handleSubMenuToggle(index)}
+                  className={`
+                    ${expandedMenu === index ? "bg-[#ffffff3d]" : ""}
+                    ${
+                      activeLink === item.href || expandedMenu === index
+                        ? "bg-white text-black"
+                        : "text-white"
+                    }
+                    flex w-full py-3 px-4 justify-between outline-none hover:text-blue-900 hover:bg-gray-100 cursor-pointer items-center transition
+                  `}
+                  onClick={() =>
+                    item.subItems.length > 0 && handleSubMenuToggle(index)
+                  }
                 >
-                  <Link
-                    href={item.href}
-                    className="flex items-center focus:outline-none focus:ring-2 focus:ring-white"
-                  >
-                    {item.icon}
-                    {isExpanded && (
-                      <span className="text-md ml-2">{item.text}</span>
-                    )}
-                  </Link>
+                  {item.subItems.length > 0 ? (
+                    <div className="flex items-center w-full">
+                      {item.icon}
+                      {isExpanded && (
+                        <span className="text-md ml-2">{item.text}</span>
+                      )}
+                    </div>
+                  ) : (
+                    <Link
+                      href={item.href}
+                      className="flex items-center  outline-none  w-full"
+                    >
+                      {item.icon}
+                      {isExpanded && (
+                        <span className="text-md tracking-wider ml-2">
+                          {item.text}
+                        </span>
+                      )}
+                    </Link>
+                  )}
                 </li>
-                {/* Render subitems if expandedMenu matches current index */}
                 {expandedMenu === index && item.subItems.length > 0 && (
-                  <ul className="bg-[#ffffff3d]  text-white">
-                    {item.subItems.map((subItem, subIndex) => (
+                  <ul
+                    className="bg-[#ffffff3d] text-white overflow-hidden transition-all duration-300"
+                    style={{
+                      maxHeight:
+                        expandedMenu === index
+                          ? `${item.subItems.length * 40}px`
+                          : "0",
+                    }}
+                  >
+                    {item.subItems.map((subItem: any, subIndex) => (
                       <li
                         key={subIndex}
-                        className="flex w-full py-2 px-4 justify-between rounded-l-full hover:text-blue-900 hover:bg-gray-100 cursor-pointer items-center transition"
+                        className={`
+                          ${
+                            activeLink === subItem.href
+                              ? "text-white"
+                              : "text-gray-300"
+                          }
+                          flex w-full py-2 px-4  justify-between rounded-l-full hover:text-white outline-none  cursor-pointer items-center transition
+                        `}
                       >
                         <Link
                           href={subItem.href}
-                          className="flex items-center focus:outline-none focus:ring-2 focus:ring-white"
+                          className="flex items-center focus:outline-none  w-full"
                         >
                           {subItem.icon}
                           {isExpanded && (
-                            <span className="text-sm ml-2">{subItem.text}</span>
+                            <span className="text-xs  font-medium tracking-wider ml-2">
+                              {subItem.text}
+                            </span>
                           )}
                         </Link>
                       </li>

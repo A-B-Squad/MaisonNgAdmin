@@ -7,7 +7,7 @@ import { IoMdAlert } from "react-icons/io";
 import { StaticImport } from "next/dist/shared/lib/get-img-props";
 import { FaTrashAlt } from "react-icons/fa";
 
-const UploadImage = ({ uploadedImages, setUploadedImages }: any) => {
+const UpdateImage = ({ uploadedImages, setUploadedImages }: any) => {
   const handleSuccessUpload = (result: any) => {
     setUploadedImages((prevImages: any) => [
       ...prevImages,
@@ -23,12 +23,12 @@ const UploadImage = ({ uploadedImages, setUploadedImages }: any) => {
 
   return (
     <div className="upload-image bg-white p-6 rounded-lg shadow-lg w-full mx-auto">
-      <h3 className="text-lg font-bold mb-4">Upload Image</h3>
+      <h3 className="text-lg font-semibold text-gray-700 mb-4">Upload Image</h3>
       <CldUploadWidget
         uploadPreset="MaisonNg"
         onSuccess={(result, { widget }) => {
           handleSuccessUpload(result);
-          // widget.close();
+          widget.close();
         }}
       >
         {({ open }) => (
@@ -56,7 +56,9 @@ const UploadImage = ({ uploadedImages, setUploadedImages }: any) => {
               height={800}
               src={url}
               alt={`Uploaded image ${index + 1}`}
-              className="h-32 w-32 object-cover rounded-md"
+              className="h-32 w-32  rounded-md"
+              objectFit="contain"
+
             />
             <button
               type="button"
@@ -72,4 +74,4 @@ const UploadImage = ({ uploadedImages, setUploadedImages }: any) => {
   );
 };
 
-export default UploadImage;
+export default UpdateImage;

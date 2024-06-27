@@ -39,7 +39,7 @@ const CarouselAdvertisingPage = () => {
   ]);
   const [largeImageTest, setLargeImageTest] = useState<string>("");
   const [loadingImages, setLoadingImages] = useState<Record<string, boolean>>(
-    {},
+    {}
   );
 
   const { data: centerCarouselAds, loading: loadingCenterCarouselAds } =
@@ -47,7 +47,7 @@ const CarouselAdvertisingPage = () => {
       variables: { position: "slider" },
     });
   const [createAdvertisement] = useMutation(
-    CREATE_CAROUSEL_ADVERTISEMENT_MUTATIONS,
+    CREATE_CAROUSEL_ADVERTISEMENT_MUTATIONS
   );
 
   const handleSave = async () => {
@@ -60,7 +60,7 @@ const CarouselAdvertisingPage = () => {
 
       // Check if any input field is empty
       const hasEmptyFields = input.some(
-        (field) => !field.link || field.images.length === 0,
+        (field) => !field.link || field.images.length === 0
       );
 
       if (hasEmptyFields) {
@@ -96,7 +96,7 @@ const CarouselAdvertisingPage = () => {
             ad.images.map((image: string) => ({
               urlImage: image,
               linkImage: ad.link,
-            })),
+            }))
         );
       setImagesSlider(allImages);
       setInputFields(allImages);
@@ -126,7 +126,7 @@ const CarouselAdvertisingPage = () => {
   const handleInputChange = (
     index: number,
     field: keyof ImageData,
-    value: string,
+    value: string
   ) => {
     setInputFields((prevFields) => {
       const newFields = [...prevFields];
@@ -169,7 +169,7 @@ const CarouselAdvertisingPage = () => {
                 src={largeImageTest}
                 alt="image de carrousel"
                 layout="fill"
-                objectFit="cover"
+                objectFit="contain"
                 onLoadingComplete={() =>
                   setLoadingImages((prev) => ({
                     ...prev,
@@ -200,7 +200,7 @@ const CarouselAdvertisingPage = () => {
                       src={img.urlImage}
                       alt={`image de carrousel ${index}`}
                       layout="fill"
-                      objectFit="cover"
+                      objectFit="contain"
                       onLoadingComplete={() =>
                         setLoadingImages((prev) => ({
                           ...prev,
@@ -273,7 +273,7 @@ const CarouselAdvertisingPage = () => {
                       className={`${
                         !loadingImages[field.urlImage] ? "visible" : "invisible"
                       }`}
-                      objectFit="cover"
+                      objectFit="contain"
                       onLoadingComplete={() =>
                         setLoadingImages((prev) => ({
                           ...prev,
