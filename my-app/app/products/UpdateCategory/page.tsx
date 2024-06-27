@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { CldUploadWidget } from "next-cloudinary";
 import { useLazyQuery, useMutation, useQuery } from "@apollo/client";
-import { CATEGORY_BY_ID_QUERY, CATEGORY_QUERY } from "../graph/queries";
+import { CATEGORY_BY_ID_QUERY, CATEGORY_QUERY } from "../../graph/queries";
 import {
   Select,
   SelectContent,
@@ -13,11 +13,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import Image from "next/image";
-import SmallSpinner from "../components/SmallSpinner";
+import SmallSpinner from "../../components/SmallSpinner";
 import {
   CREATE_CATEGORY_MUTATIONS,
   UPDATE_CATEGORY_MUTATIONS,
-} from "../graph/mutations";
+} from "../../graph/mutations";
 import { useToast } from "@/components/ui/use-toast";
 
 interface Category {
@@ -297,7 +297,7 @@ const UpdateCategory = ({ searchParams }: any) => {
                     src={formData.bigImage}
                     alt={formData.name}
                     layout="fill"
-                    objectFit="cover"
+                    objectFit="contain"
                     onLoadingComplete={() =>
                       setUploadingImage((prev) => ({
                         ...prev,

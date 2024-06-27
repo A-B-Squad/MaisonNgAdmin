@@ -1,29 +1,34 @@
 "use client";
-import React, { useState } from "react";
-import ChoiceCategory from "./Components/ChoiceCategory";
-import ChoiceBrand from "./Components/ChoiceBrand";
-import AddStock from "./Components/AddStock";
-import AddDescription from "./Components/AddDescription";
-import AddPrice from "./Components/AddPrice";
-import AddAttribute from "./Components/AddAttributes";
-import UploadImage from "./Components/UploadImages";
-import { useMutation } from "@apollo/client";
-import { CREATE_PRODUCT_MUTATIONS } from "../graph/mutations";
-import AddReference from "./Components/AddRef";
-import ChoiseColors from "./Components/ChoiseColors";
+import React, { useEffect, useState } from "react";
+import ChoiceCategory from "./Components/UpdateCategory";
+import UpdateBrand from "./Components/UpdateBrand";
+import UpdateInventory from "./Components/UpdateInventory";
+import UpdateDescription from "./Components/UpdateDescription";
+import UpdatePrice from "./Components/UpdatePrice";
+import UpdateAttribute from "./Components/UpdateAttributes";
+import UpdateImage from "./Components/UploadImages";
+import { useMutation, useQuery } from "@apollo/client";
+import { UPDATE_PRODUCT_MUTATIONS } from "../../graph/mutations";
+import UpdateReference from "./Components/UpdateReference";
+import UpdateColors from "./Components/UpdateColors";
 import { useToast } from "@/components/ui/use-toast";
+import { PRODUCT_BY_ID_QUERY } from "../../graph/queries";
+import Load from "./Load";
 
 interface Attribute {
   name: string;
   value: string;
 }
 
-const CreateProduct = () => {
+const UpdateProduct = ({ searchParams }: any) => {
   const { toast } = useToast();
-
+  const productId = searchParams.productId;
   const [attributes, setAttributes] = useState<Attribute[]>([
     { name: "", value: "" },
   ]);
+  const [discountType, setDiscountType] = useState<"percentage" | "manual">(
+    "percentage",
+  );
   const [uploadedImages, setUploadedImages] = useState<string[]>([]);
   const [title, setTitle] = useState<string>("");
   const [description, setDescription] = useState<string>("");
@@ -41,6 +46,7 @@ const CreateProduct = () => {
   );
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const [visibility, setVisibility] = useState<boolean>(true);
+  const [discountedPrice, setDiscountedPrice] = useState<string>("0.00");
 
   const [selectedIds, setSelectedIds] = useState({
     categoryId: "",
@@ -48,9 +54,66 @@ const CreateProduct = () => {
     subSubcategoryId: "",
   });
   const [brand, setBrand] = useState<string | null>(null);
-  const [createProductMutation] = useMutation(CREATE_PRODUCT_MUTATIONS);
+  const [updateProductMutation] = useMutation(UPDATE_PRODUCT_MUTATIONS);
 
-  const handleSubmit = () => {
+  const {
+    data: productDataById,
+    loading,
+    error,
+  } = useQuery(PRODUCT_BY_ID_QUERY, {
+    variables: { productByIdId: productId },
+  });
+
+  useEffect(() => {
+    if (!loading && !error && productDataById) {
+      const product = productDataById.productById;
+      setTitle(product.name);
+      setDescription(product.description);
+      setStock(product.inventory);
+      setReference(product.reference);
+      setUploadedImages(product.images);
+      setOriginalPrice(product.price);
+      setVisibility(product.isVisible);
+      setSelectedColor(product.Colors?.id);
+      setBrand(product.Brand?.id);
+      setAttributes(
+        product.attributes.map((attr: { name: any; value: any }) => ({
+          name: attr.name,
+          value: attr.value,
+        })),
+      );
+
+      if (product.categories.length > 0) {
+        const category = product.categories[0];
+        setSelectedIds({
+          categoryId: category.id,
+          subcategoryId:
+            category.subcategories.length > 0
+              ? category.subcategories[0].id
+              : "",
+          subSubcategoryId:
+            category.subcategories.length > 0 &&
+            category.subcategories[0].subcategories.length > 0
+              ? category.subcategories[0].subcategories[0].id
+              : "",
+        });
+      }
+
+      if (product.productDiscounts && product.productDiscounts.length > 0) {
+        const discount = product.productDiscounts[0];
+
+        if (discount.discountId) {
+          setDiscountType("percentage");
+          setSelectedDicountId(discount.discountId);
+        } else {
+          setDiscountType("manual");
+          setManualDiscountPrice(product.price - discount.newPrice);
+        }
+      }
+    }
+  }, [productDataById, loading, error]);
+
+  const handleUpdateProduct = () => {
     if (
       !title ||
       !description ||
@@ -58,7 +121,7 @@ const CreateProduct = () => {
       !selectedIds.categoryId
     ) {
       toast({
-        title: "Erreur de création",
+        title: "Erreur de mise à jour",
         className: "text-white bg-red-600 border-0",
         description: "Veuillez remplir tous les champs obligatoires.",
         duration: 5000,
@@ -73,15 +136,14 @@ const CreateProduct = () => {
       newPrice: manualDiscountPrice,
     };
 
-    const hasDiscount =
-      discount.dateOfStart &&
-      discount.dateOfEnd &&
-      (manualDiscountPrice || discountPercentage);
+    const hasDiscount = manualDiscountPrice || selectedDiscountId;
+    console.log(discount);
 
-    if (hasDiscount) {
+    if (!!hasDiscount) {
+      console.log(hasDiscount);
       if (!discount.dateOfStart || !discount.dateOfEnd) {
         toast({
-          title: "Erreur de création",
+          title: "Erreur de mise à jour",
           className: "text-white bg-red-600 border-0",
           description:
             "Veuillez remplir les dates de début et de fin de remise.",
@@ -89,11 +151,20 @@ const CreateProduct = () => {
         });
         return;
       }
-      if (!manualDiscountPrice && !discountPercentage) {
+      if (discountType === "manual" && !manualDiscountPrice) {
         toast({
-          title: "Erreur de création",
+          title: "Erreur de mise à jour",
           className: "text-white bg-red-600 border-0",
-          description: "Veuillez fournir un prix de remise ou un pourcentage.",
+          description: "Veuillez fournir un prix de remise manuel.",
+          duration: 5000,
+        });
+        return;
+      }
+      if (discountType === "percentage" && !selectedDiscountId) {
+        toast({
+          title: "Erreur de mise à jour",
+          className: "text-white bg-red-600 border-0",
+          description: "Veuillez sélectionner un type de remise.",
           duration: 5000,
         });
         return;
@@ -102,7 +173,7 @@ const CreateProduct = () => {
 
     if (!originalPrice && !hasDiscount) {
       toast({
-        title: "Erreur de création",
+        title: "Erreur de mise à jour",
         className: "text-white bg-red-600 border-0",
         description: "Veuillez fournir un prix ou une remise.",
         duration: 5000,
@@ -111,6 +182,7 @@ const CreateProduct = () => {
     }
 
     const productData = {
+      productId: productId,
       input: {
         attributeInputs: attributes.filter(
           (attr) => attr.name.trim() !== "" && attr.value.trim() !== "",
@@ -133,7 +205,7 @@ const CreateProduct = () => {
       },
     };
 
-    createProductMutation({
+    updateProductMutation({
       variables: productData,
       onCompleted() {
         // Reset all inputs
@@ -157,20 +229,28 @@ const CreateProduct = () => {
           subSubcategoryId: "",
         });
         setBrand("");
-
+        window.close();
         toast({
-          title: "Produit créé",
+          title: "Produit mis à jour",
           className: "text-white bg-mainColorAdminDash border-0",
-          description: "Le produit a été créé avec succès.",
+          description: "Le produit a été mis à jour avec succès.",
           duration: 5000,
         });
       },
     });
   };
 
+  if (loading)
+    return (
+      <div className="h-dvh relative overflow-hidden border bg-[#ffffffc2] rounded-md flex items-center justify-center w-full">
+        <Load />
+      </div>
+    );
+  if (error) return <p>Erreur : {error.message}</p>;
+
   return (
     <div className="container mx-auto py-10 bg-slate-100 w-full">
-      <h1 className="text-2xl font-bold mb-6">Créer un produit</h1>
+      <h1 className="text-2xl font-bold mb-6">Mettre à jour un produit</h1>
       <div className="details flex w-full gap-5">
         <div className="baseDetails w-3/4 flex flex-col gap-3">
           <div className="p-3 rounded-md shadow-lg bg-white">
@@ -184,13 +264,13 @@ const CreateProduct = () => {
                 onChange={(e) => setTitle(e.target.value)}
               />
             </div>
-            <AddDescription
+            <UpdateDescription
               description={description}
               setDescription={setDescription}
             />
           </div>
 
-          <AddPrice
+          <UpdatePrice
             discountPercentage={discountPercentage}
             setDiscountPercentage={setDiscountPercentage}
             manualDiscountPrice={manualDiscountPrice}
@@ -203,14 +283,19 @@ const CreateProduct = () => {
             setDateOfStartDiscount={setDateOfStartDiscount}
             selectedDiscountId={selectedDiscountId}
             setSelectedDicountId={setSelectedDicountId}
+            discountType={discountType}
+            setDiscountType={setDiscountType}
           />
 
-          <UploadImage
+          <UpdateImage
             uploadedImages={uploadedImages}
             setUploadedImages={setUploadedImages}
           />
 
-          <AddAttribute attributes={attributes} setAttributes={setAttributes} />
+          <UpdateAttribute
+            attributes={attributes}
+            setAttributes={setAttributes}
+          />
         </div>
 
         <div className="moreDetails w-1/4 flex flex-col gap-3">
@@ -218,14 +303,17 @@ const CreateProduct = () => {
             <label className="block border-b py-2 w-full text-gray-700 font-semibold tracking-wider">
               Visibilité
             </label>
-            <div className="flex w-full gap-2 py-3 my-2 px-1 cursor-pointer border-slate-200 rounded-md border justify-start">
-              <input
-                type="checkbox"
-                className="checkbox-custom relative border-gray-300 w-5 h-5 appearance-none bg-white border rounded-md cursor-pointer checked:bg-mainColorAdminDash"
-                checked={visibility}
-                onChange={(e) => setVisibility(e.target.checked)}
-              />
-              <label className="text-sm">Boutique en ligne</label>
+            <div className="flex items-center justify-between py-2">
+              <span className="text-gray-600 font-semibold">Visible</span>
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  className="sr-only peer"
+                  checked={visibility}
+                  onChange={(e) => setVisibility(e.target.checked)}
+                />
+                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-mainColorAdminDash rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-mainColorAdminDash"></div>
+              </label>
             </div>
           </div>
 
@@ -233,25 +321,25 @@ const CreateProduct = () => {
             selectedIds={selectedIds}
             setSelectedIds={setSelectedIds}
           />
-
-          <AddStock stock={stock} setStock={setStock} />
-          <AddReference reference={reference} setReference={setReference} />
-          <ChoiseColors
+          <UpdateBrand setBrand={setBrand} selectedBrandId={brand} />
+          <UpdateInventory stock={stock} setStock={setStock} />
+          <UpdateColors
             selectedColor={selectedColor}
             setSelectedColor={setSelectedColor}
           />
-          <ChoiceBrand brand={brand} setBrand={setBrand} />
+          <UpdateReference reference={reference} setReference={setReference} />
         </div>
       </div>
-      <button
-        type="button"
-        className="w-full py-3 mt-6 hover:opacity-90 transition-all bg-mainColorAdminDash text-white rounded-md shadow-sm hover:bg-mainColorAdminDash-dark"
-        onClick={handleSubmit}
-      >
-        Créer le produit
-      </button>
+      <div className="w-full my-5 py-2">
+        <button
+          onClick={handleUpdateProduct}
+          className="py-2 w-full flex items-center justify-center gap-3 rounded-lg text-center bg-mainColorAdminDash text-white"
+        >
+          <span className="font-semibold text-lg">Mettre à jour</span>
+        </button>
+      </div>
     </div>
   );
 };
 
-export default CreateProduct;
+export default UpdateProduct;

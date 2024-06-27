@@ -5,7 +5,7 @@ import { IoSearch } from "react-icons/io5";
 import { useRouter } from "next/navigation";
 
 interface SearchBarProps {
-  page: "Categories" | "Products" | "Inventory";
+  page: "Products/Categories" | "Products/Inventory" | "Products/Reviews";
 }
 
 const SearchBar: React.FC<SearchBarProps> = ({ page }) => {
@@ -33,7 +33,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ page }) => {
   };
 
   const getPlaceholder = () => {
-    return page === "Categories"
+    return page === "Products/Categories"
       ? "Rechercher une catégorie"
       : "Trouver un produit";
   };
@@ -57,7 +57,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ page }) => {
           <IoSearch size={24} />
         </button>
       </div>
-      {page !== "Categories" && (
+      {page !== "Products/Categories" && (
         <select
           onChange={handleFiltreChange}
           className="w-[20%] h-10 border-2 border-sky-500 text-sky-500 rounded px-2 md:px-3 py-0 md:py-1 tracking-wider"

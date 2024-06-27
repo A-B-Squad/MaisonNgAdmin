@@ -70,6 +70,9 @@ export const SEARCH_PRODUCTS_QUERY = gql`
           description
           inventory
           solde
+          reviews {
+            rating
+          }
           categories {
             id
             name

@@ -58,7 +58,7 @@ const UploadBannerAds = ({
               src={localLargeImage}
               alt="image de carrousel"
               layout="fill"
-              objectFit="cover"
+              objectFit="contain"
               onLoadingComplete={() => setLocalLoadingImages(false)}
               onError={() => setLocalLoadingImages(false)}
             />
@@ -101,7 +101,7 @@ const UploadBannerAds = ({
                   alt="image téléchargée"
                   layout="fill"
                   className={`${!localLoadingImages ? "visible" : "invisible"}`}
-                  objectFit="cover"
+                  objectFit="contain"
                   onLoadingComplete={() => setLocalLoadingImages(false)}
                   onError={() => setLocalLoadingImages(false)}
                 />

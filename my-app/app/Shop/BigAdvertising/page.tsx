@@ -29,7 +29,7 @@ const BigAdvertisingPage = () => {
     linkImage: "",
   });
   const [loadingImages, setLoadingImages] = useState<Record<string, boolean>>(
-    {},
+    {}
   );
 
   const { data: centerCarouselAds, loading: loadingCenterCarouselAds } =
@@ -114,7 +114,7 @@ const BigAdvertisingPage = () => {
                 src={image.urlImage}
                 alt="image de carrousel"
                 layout="fill"
-                objectFit="cover"
+                objectFit="contain"
                 onLoadingComplete={() =>
                   setLoadingImages((prev) => ({
                     ...prev,
@@ -171,7 +171,7 @@ const BigAdvertisingPage = () => {
                     className={`${
                       !loadingImages[image.urlImage] ? "visible" : "invisible"
                     }`}
-                    objectFit="cover"
+                    objectFit="contain"
                     onLoadingComplete={() =>
                       setLoadingImages((prev) => ({
                         ...prev,

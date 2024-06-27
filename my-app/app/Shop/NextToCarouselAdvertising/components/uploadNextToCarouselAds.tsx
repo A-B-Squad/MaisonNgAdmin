@@ -59,7 +59,7 @@ const UploadNextToCarouselAds = ({
               src={localLargeImage}
               alt="image de carrousel"
               layout="fill"
-              objectFit="cover"
+              objectFit="contain"
               onLoadingComplete={() => setLocalLoadingImages(false)}
               onError={() => setLocalLoadingImages(false)}
             />
@@ -102,7 +102,7 @@ const UploadNextToCarouselAds = ({
                   alt="image téléchargée"
                   layout="fill"
                   className={`${!localLoadingImages ? "visible" : "invisible"}`}
-                  objectFit="cover"
+                  objectFit="contain"
                   onLoadingComplete={() => setLocalLoadingImages(false)}
                   onError={() => setLocalLoadingImages(false)}
                 />
