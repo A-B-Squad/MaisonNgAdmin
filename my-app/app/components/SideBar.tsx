@@ -40,7 +40,11 @@ const SideBar = () => {
       icon: <LuPackage2 size={24} />,
       text: "Commandes",
       href: "/packages",
-      subItems: [],
+      subItems: [
+        { text: "Tous les commandes", href: "/Orders" },
+        { text: "Nouvelle commande", href: "/Orders/CreateOrder" },
+        { text: "Paniers abandonnés", href: "/Orders/AbandonedBasket" },
+      ],
     },
     {
       icon: <TbPackages size={24} />,
@@ -52,6 +56,16 @@ const SideBar = () => {
         { text: "Categoriés", href: "/Products/Categories" },
         { text: "Inventaire", href: "/Products/Inventory" },
         { text: "Commentaires", href: "/Products/Reviews" },
+      ],
+    },
+    {
+      icon: <TbPackages size={24} />,
+      text: "Coupons",
+      href: "/Coupons",
+      subItems: [
+        { text: "Tous les coupons", href: "/Coupons" },
+        { text: "Nouveau coupons", href: "/Coupons/CreateCoupons" },
+    
       ],
     },
     {

@@ -11,7 +11,10 @@ import InventoryTable from "./components/InventoryTable";
 import { useToast } from "@/components/ui/use-toast";
 import { SEARCH_PRODUCTS_QUERY } from "@/app/graph/queries";
 import { UPDATE_PRODUCT_INVENTORY_MUTATION } from "@/app/graph/mutations";
-
+import { jsPDF } from "jspdf";
+import "jspdf-autotable";
+import autoTable from "jspdf-autotable";
+import * as XLSX from "xlsx";
 interface Product {
   id: string;
   name: string;
@@ -20,7 +23,6 @@ interface Product {
   inventory: number;
   images: string[];
   categories: any[];
-  
 }
 
 interface InventoryProps {
@@ -29,9 +31,6 @@ interface InventoryProps {
     order?: "ASC" | "DESC";
   };
 }
-
-
-
 
 const Inventory: React.FC<InventoryProps> = ({ searchParams }) => {
   const { q: query, order } = searchParams;
@@ -81,6 +80,98 @@ const Inventory: React.FC<InventoryProps> = ({ searchParams }) => {
     }
   }, [page, query, order, searchProducts]);
 
+  const exportToPDF = () => {
+    const doc = new jsPDF();
+  
+    // Define the main color as a tuple
+    const mainColor: [number, number, number] = [32, 41, 57];
+  
+    // Add a title
+    doc.setFontSize(18);
+    doc.setTextColor(...mainColor);
+    doc.text("Rapport d'Inventaire", 14, 22);
+  
+    // Add a separation line
+    doc.setLineWidth(0.5);
+    doc.line(14, 25, 196, 25);
+  
+    // Format the current date and time
+    const currentDate = new Date();
+    const formattedDate = currentDate.toLocaleDateString("fr-FR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    });
+    const formattedTime = currentDate.toLocaleTimeString("fr-FR", {
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+    });
+  
+    // Add a subtitle with date and time
+    doc.setFontSize(12);
+    doc.text(`Généré le: ${formattedDate} à ${formattedTime}`, 14, 32);
+  
+    // Add the table with custom styles
+    autoTable(doc, {
+      startY: 40, // Starting position of the table
+      head: [["Nom", "Référence", "Solde", "Inventaire"]],
+      body: products.map((product) => [
+        product.name,
+        product.reference,
+        product.solde,
+        product.inventory,
+      ]),
+      styles: {
+        fontSize: 10, // Cell font size
+        cellPadding: 3, // Cell padding
+      },
+      headStyles: {
+        fillColor: mainColor, // Header background color
+        textColor: [255, 255, 255], // Header text color
+        fontStyle: "bold", // Header font style
+      },
+      alternateRowStyles: {
+        fillColor: [245, 245, 245], // Alternate row background color
+      },
+      margin: { top: 40 }, // Top margin of the table
+    });
+  
+    // Save the PDF
+    doc.save("inventaire.pdf");
+  };
+  const exportToExcel = () => {
+    // Préparer les données
+    const data = [
+      ["Nom", "Référence", "Solde", "Inventaire"], // En-têtes
+      ...products.map((product) => [
+        product.name,
+        product.reference,
+        product.solde,
+        product.inventory,
+      ]),
+    ];
+
+    // Créer une feuille de calcul
+    const ws = XLSX.utils.aoa_to_sheet(data);
+
+    // Ajouter des largeurs de colonnes
+    const wscols = [
+      { wch: 20 }, // "Nom" colonne
+      { wch: 20 }, // "Référence" colonne
+      { wch: 10 }, // "Solde" colonne
+      { wch: 15 }, // "Inventaire" colonne
+    ];
+    ws["!cols"] = wscols;
+
+    // Créer un classeur et ajouter la feuille de calcul
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Inventaire");
+
+    // Écrire le fichier
+    XLSX.writeFile(wb, "inventaire.xlsx");
+  };
+
   useEffect(() => {
     fetchProducts();
   }, [fetchProducts]);
@@ -125,20 +216,21 @@ const Inventory: React.FC<InventoryProps> = ({ searchParams }) => {
         if (inputRefs.current[productId]) {
           inputRefs.current[productId].value = "";
         }
-
         toast({
           title: "Succès",
           className: "text-white bg-green-600 border-0",
           description: "L'inventaire a été mis à jour avec succès.",
           duration: 3000,
         });
+        window.location.reload();
       }
     } catch (error) {
       console.error("Error updating inventory:", error);
       toast({
         title: "Erreur",
         className: "text-white bg-red-600 border-0",
-        description: "Une erreur est survenue lors de la mise à jour de l'inventaire.",
+        description:
+          "Une erreur est survenue lors de la mise à jour de l'inventaire.",
         duration: 5000,
       });
     }
@@ -155,6 +247,20 @@ const Inventory: React.FC<InventoryProps> = ({ searchParams }) => {
         </h1>
         <div className="mt-5 ">
           <SearchBar page="Products/Inventory" />
+          <div className="flex justify-end space-x-4 mb-4">
+            <button
+              onClick={exportToPDF}
+              className="bg-mainColorAdminDash text-white px-4 py-2 rounded"
+            >
+              Exporter PDF
+            </button>
+            <button
+              onClick={exportToExcel}
+              className="bg-green-600 text-white px-4 py-2 rounded"
+            >
+              Exporter Excel
+            </button>
+          </div>
           {loading ? (
             <div className="flex justify-center ">
               <SmallSpinner />

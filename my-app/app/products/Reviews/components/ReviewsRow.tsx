@@ -82,7 +82,7 @@ const ReviewsRow: React.FC<InventoryRowProps> = ({ product }) => {
         {product.solde}
       </td>
       <td className="text-center px-4 py-3 text-sm font-semibold">
-        {product.inventory}
+        {product.reviews.length}
       </td>
       <td className="text-center px-4 py-3 text-sm">
         <div className="Reviews flex items-center justify-center space-x-2">

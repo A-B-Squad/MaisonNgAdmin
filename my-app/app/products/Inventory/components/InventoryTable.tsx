@@ -34,14 +34,24 @@ const InventoryTable: React.FC<InventoryTableProps> = ({
             </tr>
           </thead>
           <tbody className="bg-white">
-            {products.map((product) => (
-              <InventoryRow
-                key={product.id}
-                product={product}
-                inputRef={(el) => (inputRefs.current[product.id] = el)}
-                onAddInventory={() => handleAddToInventory(product.id)}
-              />
-            ))}
+            {products.length > 0 ? (
+              products.map((product) => (
+                <InventoryRow
+                  key={product.id}
+                  product={product}
+                  inputRef={(el) => (inputRefs.current[product.id] = el)}
+                  onAddInventory={() => handleAddToInventory(product.id)}
+                />
+              ))
+            ) : (
+              <tr>
+                <td
+                className="py-5 text-center" 
+                >
+                  Aucun produit disponible
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>

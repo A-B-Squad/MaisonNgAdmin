@@ -24,7 +24,7 @@ const ReviewsTable: React.FC<InventoryTableProps> = ({ products }) => (
               <th className="px-4 py-3">Nom</th>
               <th className="px-4 py-3">SKU</th>
               <th className="px-4 py-3">Commandes</th>
-              <th className="px-4 py-3">Inventaire</th>
+              <th className="px-4 py-3">Nb Personne</th>
               <th className="px-4 py-3">Notation</th>
             </tr>
           </thead>

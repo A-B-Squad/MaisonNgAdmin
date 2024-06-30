@@ -8,7 +8,7 @@ import moment from "moment";
 import prepRoute from "@/app/Helpers/_prepRoute";
 
 interface ProductRowProps {
-  product: Product;
+  product: any;
   onDeleteClick: (product: { id: string; name: string }) => void;
 }
 
@@ -79,7 +79,7 @@ const ProductRow: React.FC<ProductRowProps> = ({ product, onDeleteClick }) => {
           <Link
             target="_blank"
             href={{
-              pathname: "/UpdateProduct",
+              pathname: "/Products/UpdateProduct",
               query: { productId: product.id },
             }}
             className="p-2 w-10 hover:opacity-40 transition-opacity shadow-md h-10 rounded-full border-2"

@@ -84,7 +84,7 @@ const CreateCategory = () => {
           bigImage: "",
         });
 
-        // window.location.reload();
+        window.location.reload();
       },
     });
   };
