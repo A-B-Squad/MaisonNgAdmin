@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { FiEdit2, } from "react-icons/fi";
+import { FiEdit2 } from "react-icons/fi";
 import { BiShow } from "react-icons/bi";
 import { MdDeleteOutline } from "react-icons/md";
 import { CATEGORY_QUERY } from "../../graph/queries";
@@ -193,9 +193,22 @@ const Categories = ({ searchParams }: any) => {
                 <th className="px-4 py-3">Actions</th>
               </tr>
             </thead>
-            <tbody className="bg-white">
-              {filteredCategories.map((category) =>
-                renderCategoryRow(category)
+            <tbody className="bg-white border">
+              {filteredCategories.length > 0 ? (
+                filteredCategories.map((category) =>
+                  renderCategoryRow(category)
+                )
+              ) : (
+                <>
+                  <tr className="bg-gray-50">
+                    <td className="text-center  w-full py-5   ">
+                      Aucune catégorie trouvée
+                    </td>
+                    <td className="text-center  w-full py-5 ">
+                      
+                    </td>
+                  </tr>
+                </>
               )}
             </tbody>
           </table>

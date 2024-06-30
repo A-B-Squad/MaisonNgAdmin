@@ -81,7 +81,7 @@ const Products = ({ searchParams }: any) => {
               />
             )}
             <Link
-              href="/CreateProduct"
+              href="Products/CreateProduct"
               className="text-white py-2 hover:opacity-85 transition-opacity px-8 rounded-md shadow-md bg-mainColorAdminDash"
             >
               Ajouter un produit +

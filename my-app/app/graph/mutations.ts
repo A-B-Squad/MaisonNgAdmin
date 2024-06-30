@@ -43,6 +43,16 @@ export const DELETE_PRODUCT_MUTATIONS = gql`
     deleteProduct(productId: $productId)
   }
 `;
+export const DELETE_COUPONS_MUTATIONS = gql`
+mutation DeleteCoupons($couponsId: ID!) {
+  deleteCoupons(couponsId: $couponsId)
+}
+`;
+export const CREATE_COUPONS_MUTATIONS = gql`
+mutation CreateCoupons($input: CreateCouponInput!) {
+  createCoupons(input: $input)
+}
+`;
 export const CREATE_PRODUCT_MUTATIONS = gql`
   mutation CreateProduct($input: ProductInput!) {
     createProduct(input: $input)

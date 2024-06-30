@@ -5,7 +5,7 @@ import { IoSearch } from "react-icons/io5";
 import { useRouter } from "next/navigation";
 
 interface SearchBarProps {
-  page: "Products/Categories" | "Products/Inventory" | "Products/Reviews";
+  page: "Products/Categories" | "Products/Inventory" | "Products/Reviews" | "Products" | "Coupons";
 }
 
 const SearchBar: React.FC<SearchBarProps> = ({ page }) => {
@@ -33,9 +33,35 @@ const SearchBar: React.FC<SearchBarProps> = ({ page }) => {
   };
 
   const getPlaceholder = () => {
-    return page === "Products/Categories"
-      ? "Rechercher une catégorie"
-      : "Trouver un produit";
+    switch (page) {
+      case "Products/Categories":
+        return "Rechercher une catégorie";
+      case "Coupons":
+        return "Rechercher un coupon";
+      default:
+        return "Trouver un produit";
+    }
+  };
+
+  const renderFilterOptions = () => {
+    if (page === "Coupons") {
+      return (
+        <>
+          <option value="">Filtres de recherche</option>
+          <option value="USED">Utilisé</option>
+          <option value="UNUSED">Non Utilisé</option>
+        </>
+      );
+    } else if (page !== "Products/Categories") {
+      return (
+        <>
+          <option value="">Filtres de recherche</option>
+          <option value="ASC">prix : Asc</option>
+          <option value="DESC">prix : Desc</option>
+        </>
+      );
+    }
+    return null;
   };
 
   return (
@@ -52,7 +78,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ page }) => {
         />
         <button
           type="submit"
-          className="absolute left-1 bottom-2 text-gray-700  cursor-pointer"
+          className="absolute left-1 bottom-2 text-gray-700 cursor-pointer"
         >
           <IoSearch size={24} />
         </button>
@@ -62,9 +88,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ page }) => {
           onChange={handleFiltreChange}
           className="w-[20%] h-10 border-2 border-sky-500 text-sky-500 rounded px-2 md:px-3 py-0 md:py-1 tracking-wider"
         >
-          <option value="">Filtres de recherche</option>
-          <option value="ASC">prix : Asc</option>
-          <option value="DESC">prix : Desc</option>
+          {renderFilterOptions()}
         </select>
       )}
     </form>

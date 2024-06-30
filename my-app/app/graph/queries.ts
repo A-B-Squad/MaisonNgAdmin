@@ -130,6 +130,56 @@ export const COLORS_QUERY = gql`
     }
   }
 `;
+export const COUPONS_QUERY = gql`
+  query FetchAllCoupons($page: Int, $pageSize: Int) {
+    fetchAllCoupons(page: $page, pageSize: $pageSize) {
+      id
+      available
+      code
+      discount
+      checkout {
+        id
+        createdAt
+      }
+    }
+  }
+`;
+
+export const ORDERS_QUERY = gql`
+  query GetAllPackages {
+    getAllPackages {
+      id
+      customId
+      Checkout {
+        userName
+        userId
+        governorateId
+        address
+        phone
+        products {
+          productQuantity
+          product {
+            name
+            price
+            productDiscounts {
+              newPrice
+            }
+            images
+            Colors {
+              color
+              Hex
+            }
+          }
+        }
+        total
+        couponsId
+      }
+      status
+      createdAt
+    }
+  }
+`;
+
 export const DISCOUNT_PERCENTAGE_QUERY = gql`
   query DiscountsPercentage {
     DiscountsPercentage {
